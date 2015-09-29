@@ -360,8 +360,8 @@ static void yy_fatal_error (yyconst char msg[]  );
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
 
-#define YY_NUM_RULES 8
-#define YY_END_OF_BUFFER 9
+#define YY_NUM_RULES 12
+#define YY_END_OF_BUFFER 13
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -369,12 +369,14 @@ struct yy_trans_info
 	flex_int32_t yy_verify;
 	flex_int32_t yy_nxt;
 	};
-static yyconst flex_int16_t yy_accept[36] =
+static yyconst flex_int16_t yy_accept[56] =
     {   0,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-        0,    0,    0,    0,    0,    0,    9,    8,    1,    8,
-        4,    8,    5,    1,    0,    2,    0,    5,    0,    5,
-        3,    0,    7,    0,    0
+        0,    0,    0,    0,    0,    0,   13,   12,    1,   12,
+       12,    3,   12,    7,    7,    8,   12,   12,    1,    0,
+        2,    0,    3,    0,    0,    0,    7,    7,    8,    0,
+        0,    0,    0,    0,    0,    0,    7,   10,   11,    9,
+        5,    4,    6,    0,    0
     } ;
 
 static yyconst flex_int32_t yy_ec[256] =
@@ -390,8 +392,8 @@ static yyconst flex_int32_t yy_ec[256] =
         8,    8,    8,    8,    8,    8,    8,    8,    8,    8,
         1,    1,    1,    1,    1,    1,    9,    8,    8,    8,
 
-        8,    8,    8,    8,    8,    8,    8,    8,    8,    8,
-        8,    8,    8,    8,   10,    8,    8,    8,    8,    8,
+        8,   10,   11,    8,   12,    8,    8,    8,    8,   13,
+        8,   14,    8,    8,   15,   16,    8,    8,    8,    8,
         8,    8,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -409,43 +411,66 @@ static yyconst flex_int32_t yy_ec[256] =
         1,    1,    1,    1,    1
     } ;
 
-static yyconst flex_int32_t yy_meta[11] =
+static yyconst flex_int32_t yy_meta[17] =
     {   0,
-        1,    2,    2,    1,    3,    3,    1,    3,    3,    3
+        1,    1,    1,    1,    2,    2,    1,    3,    3,    3,
+        3,    3,    3,    3,    3,    3
     } ;
 
-static yyconst flex_int16_t yy_base[40] =
+static yyconst flex_int16_t yy_base[61] =
     {   0,
-        0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-        0,    0,    0,    0,    0,    0,   37,   38,    0,   33,
-        9,   25,    8,    0,   31,   38,   13,   18,   24,   17,
-       38,   27,   24,   20,   38,   27,   23,   25,   14
+        0,    6,    0,    6,    9,   11,   17,    0,   33,   40,
+       33,   40,    0,    0,   43,   45,  106,  107,   50,  102,
+       89,   49,   51,    0,   90,    0,   61,   66,   56,   99,
+      107,   92,   68,    0,   91,   90,    0,   84,    0,   70,
+        0,   72,    0,   92,   83,   79,   78,   74,   76,   63,
+      107,  107,    0,   50,  107,   82,   85,   88,   57,   90
     } ;
 
-static yyconst flex_int16_t yy_def[40] =
+static yyconst flex_int16_t yy_def[61] =
     {   0,
-       35,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    1,    1,    1,   35,   35,   36,   37,
-       38,   35,   39,   36,   37,   35,   35,   38,   35,   39,
-       35,   35,   35,   35,    0,   35,   35,   35,   35
+       56,   56,    2,    2,    2,    2,   55,    7,   57,   57,
+        2,    2,    2,    2,    2,    2,   55,   55,   55,   58,
+       55,   55,   55,   59,   59,   60,   55,   55,   55,   58,
+       55,   55,   55,   23,   55,   55,   59,   59,   60,   27,
+       27,   28,   28,   55,   55,   55,   59,   55,   55,   55,
+       55,   55,   59,   55,    0,   55,   55,   55,   55,   55
     } ;
 
-static yyconst flex_int16_t yy_nxt[49] =
+static yyconst flex_int16_t yy_nxt[124] =
     {   0,
-       18,   19,   19,   20,   21,   21,   22,   23,   23,   23,
-       27,   27,   28,   28,   27,   27,   30,   31,   31,   35,
-       35,   28,   28,   25,   25,   25,   28,   28,   24,   29,
-       34,   33,   32,   26,   29,   26,   35,   17,   35,   35,
-       35,   35,   35,   35,   35,   35,   35,   35
+       55,   19,   19,   20,   22,   22,   21,   19,   19,   20,
+       22,   22,   21,   23,   23,   23,   23,   18,   19,   19,
+       20,   18,   18,   21,   24,   24,   24,   24,   25,   24,
+       24,   24,   24,   18,   19,   19,   20,   27,   27,   21,
+       18,   19,   19,   20,   27,   27,   21,   28,   28,   28,
+       28,   29,   29,   33,   33,   34,   34,   29,   29,   37,
+       35,   36,   40,   40,   32,   41,   41,   42,   42,   54,
+       43,   43,   33,   33,   48,   48,   49,   49,   48,   48,
+       49,   49,   18,   18,   18,   26,   26,   26,   30,   30,
+       30,   39,   39,   53,   52,   51,   50,   47,   46,   45,
+
+       44,   31,   38,   32,   31,   55,   17,   55,   55,   55,
+       55,   55,   55,   55,   55,   55,   55,   55,   55,   55,
+       55,   55,   55
     } ;
 
-static yyconst flex_int16_t yy_chk[49] =
+static yyconst flex_int16_t yy_chk[124] =
     {   0,
-        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-       21,   21,   23,   23,   27,   27,   39,   27,   27,   28,
-       28,   30,   30,   37,   37,   37,   38,   38,   36,   34,
-       33,   32,   29,   25,   22,   20,   17,   35,   35,   35,
-       35,   35,   35,   35,   35,   35,   35,   35
+        0,    1,    1,    1,    3,    3,    1,    2,    2,    2,
+        4,    4,    2,    5,    5,    6,    6,    7,    7,    7,
+        7,    7,    7,    7,    7,    7,    7,    7,    7,    7,
+        7,    7,    7,    9,    9,    9,    9,   11,   11,    9,
+       10,   10,   10,   10,   12,   12,   10,   15,   15,   16,
+       16,   19,   19,   22,   22,   23,   23,   29,   29,   59,
+       23,   23,   27,   27,   54,   27,   27,   28,   28,   50,
+       28,   28,   33,   33,   40,   40,   42,   42,   48,   48,
+       49,   49,   56,   56,   56,   57,   57,   57,   58,   58,
+       58,   60,   60,   47,   46,   45,   44,   38,   36,   35,
+
+       32,   30,   25,   21,   20,   17,   55,   55,   55,   55,
+       55,   55,   55,   55,   55,   55,   55,   55,   55,   55,
+       55,   55,   55
     } ;
 
 static yy_state_type yy_last_accepting_state;
@@ -465,24 +490,18 @@ char *yytext;
 #line 1 "token.l"
 #line 2 "token.l"
 #include <strings.h>
-extern YYSTYPE yylval;
+// extern YYSTYPE yylval;
 #include <stdlib.h>
 void yyerror(char *);
-#include "y.tab.h"
-int check; 
-int dummy;
-int val1;
-int val2;
-char *net_name; 
+// #include "y.tab.h"
+int check;  
 int fanouts;
 int fanins;
+char *figure_type;
 char *net_name;
 char *GATE_ASCI;
-char *GATETYPE;
-char *from;
-char *fan_net;
 
-#line 486 "lex.yy.c"
+#line 505 "lex.yy.c"
 
 #define INITIAL 0
 #define A 1
@@ -671,10 +690,10 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 33 "token.l"
+#line 23 "token.l"
 
 
-#line 678 "lex.yy.c"
+#line 697 "lex.yy.c"
 
 	if ( !(yy_init) )
 		{
@@ -727,13 +746,13 @@ yy_match:
 			while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 				{
 				yy_current_state = (int) yy_def[yy_current_state];
-				if ( yy_current_state >= 36 )
+				if ( yy_current_state >= 56 )
 					yy_c = yy_meta[(unsigned int) yy_c];
 				}
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
 			++yy_cp;
 			}
-		while ( yy_base[yy_current_state] != 38 );
+		while ( yy_base[yy_current_state] != 107 );
 
 yy_find_action:
 		yy_act = yy_accept[yy_current_state];
@@ -760,89 +779,151 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 35 "token.l"
+#line 25 "token.l"
 /*eat white space*/
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 37 "token.l"
+#line 27 "token.l"
 {
                          
-                         yylval.string = strdup(yytext);
+                         //yylval.string = strdup(yytext);
                          /*printf("I am here in comments \n");*/
-                         return COMMENT;
+                         BEGIN A;
+                         //return COMMENT;
                       }
 	YY_BREAK
 case 3:
-/* rule 3 can match eol */
 YY_RULE_SETUP
-#line 43 "token.l"
-{
-                          yylval.string = strdup(yytext);
-                          return SOURCE_GATE_INDEX;
-
+#line 37 "token.l"
+{                                          //used to match gate_index;
+                           
+                           net_name = strdup(yytext);       
+                            //yylval.number = atoi(yytext);
+                           printf("\n%s ",net_name);
+                           BEGIN B;
+                           //return NUMBER;
+ 
                         }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 50 "token.l"
-{
-                           
-                           net_name = strdup(yytext);       
-                            yylval.number = atoi(yytext);
-                           printf("%s",net_name);
-                           return NUMBER;
- 
-                        }
+#line 48 "token.l"
+{                                      //  used to match 1gat, find 1gat
+                              
+                               GATE_ASCI = strdup(yytext);
+                             printf("%s ", GATE_ASCI);
+                             //yylval.string = strdup(yytext);
+                             BEGIN C;
+                              //return GATENAME;
+                            }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 60 "token.l"
-{
+#line 57 "token.l"
+{                                        //  used to match 14fan
                               
-                               GATE_ASCI = strdup(yytext);
-                             printf("%s", GATE_ASCI);
-                             yylval.string = strdup(yytext);
-                            return GATENAME;
+                             GATE_ASCI = strdup(yytext);
+                             printf("%s " , GATE_ASCI);
+                             //yylval.string = strdup(yytext);
+                             BEGIN D;
+                            //return FANNAME;
                             }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 69 "token.l"
+#line 66 "token.l"
 {
-                              check = find_gatetype(yytext);
-                              if (check != 0) {
-                                  GATETYPE = strdup(yytext);
-                                printf("%s", GATETYPE);
-                                yylval.string = strdup(yytext);
-                                return GATETYPE;
+                             GATE_ASCI = strdup(yytext);
+                             figure_type = strdup(yytext);
+                             printf("%s ", GATE_ASCI);
+                             //yylval.string = strdup(yytext);
+                             BEGIN E;
+                            //return INPT;
                             }
-
-                             else {
-                                   /* printf("I am here in From \n"); */
-                                   from  = strdup(yytext);
-                                  printf("%s", from);
-                                  yylval.string = strdup(yytext);
-                                 return FROM;
-                            }
-                        }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 86 "token.l"
+#line 75 "token.l"
 {
-                                      printf("%s", yytext);
-                                      yylval.string = strdup(yytext);
-                                      return SA;
-                                      }
+                              GATE_ASCI = strdup(yytext);
+                              figure_type = strdup(yytext);
+                             printf("%s ", GATE_ASCI);
+                             //yylval.string = strdup(yytext);
+                             BEGIN E;
+                            //return GATETYPE;
+                            }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 92 "token.l"
+#line 84 "token.l"
+{
+                             GATE_ASCI = strdup(yytext);
+                             printf("%s ", GATE_ASCI);
+                             //yylval.string = strdup(yytext);
+                             BEGIN F;
+                            //return SOURCE_GATE_TYPE;
+                            }
+	YY_BREAK
+case 9:
+YY_RULE_SETUP
+#line 93 "token.l"
+{
+                                      if(check == 1)
+                                      {
+                                        printf("%s ", yytext);
+                                      //yylval.string = strdup(yytext);
+                                        BEGIN A;
+                                      }
+                                      else if(check == 2)
+                                      {
+                                        printf("%s ", yytext);
+                                      //yylval.string = strdup(yytext);
+                                        BEGIN G;
+                                      }
+                                      else
+                                      {
+                                        printf("%s ", yytext);
+                                      //yylval.string = strdup(yytext);
+                                        BEGIN A;
+                                      }
+                                      //return SA;
+
+                                }
+	YY_BREAK
+case 10:
+/* rule 10 can match eol */
+YY_RULE_SETUP
+#line 115 "token.l"
+{                                  //used to match the number of fan, but in string
+                          //yylval.string = strdup(yytext);
+                          GATE_ASCI = strdup(yytext);
+                          printf("%s  ", GATE_ASCI); 
+                          BEGIN F;
+                          //return NUMBER_OF_FAN;
+
+                        }
+	YY_BREAK
+case 11:
+/* rule 11 can match eol */
+YY_RULE_SETUP
+#line 124 "token.l"
+{                                  //used to find the source, but in string
+                          //yylval.string = strdup(yytext);
+                          GATE_ASCI = strdup(yytext);
+                          printf("%s \n", GATE_ASCI); 
+                          BEGIN A;
+                          //return SOURCE_OF_GATE;
+
+                        }
+	YY_BREAK
+case 12:
+YY_RULE_SETUP
+#line 132 "token.l"
 ECHO;
 	YY_BREAK
-#line 846 "lex.yy.c"
+#line 927 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(A):
 case YY_STATE_EOF(B):
@@ -1141,7 +1222,7 @@ static int yy_get_next_buffer (void)
 		while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 			{
 			yy_current_state = (int) yy_def[yy_current_state];
-			if ( yy_current_state >= 36 )
+			if ( yy_current_state >= 56 )
 				yy_c = yy_meta[(unsigned int) yy_c];
 			}
 		yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
@@ -1169,11 +1250,11 @@ static int yy_get_next_buffer (void)
 	while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 		{
 		yy_current_state = (int) yy_def[yy_current_state];
-		if ( yy_current_state >= 36 )
+		if ( yy_current_state >= 56 )
 			yy_c = yy_meta[(unsigned int) yy_c];
 		}
 	yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
-	yy_is_jam = (yy_current_state == 35);
+	yy_is_jam = (yy_current_state == 55);
 
 	return yy_is_jam ? 0 : yy_current_state;
 }
@@ -1846,21 +1927,28 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 92 "token.l"
+#line 132 "token.l"
 
 
 
 int find_gatetype(char *string_pass){
   char *string_cmp = "from";
 
-  if(strcmp(string_pass, string_cmp) == 0) {
+  if(strcmp(string_pass, "inpt") == 0) {
    /* printf("I am here  in FROM FUNCTION \n"); */
    return 0;
   }
-   else{
+   else if(strcmp(string_pass, "from") == 0)
+   {
     return 1;
    }
+  else
+  {
+    return 2;
+  }
 }
+
+
 int main(int argc, char *argv[]){
 //int argc;
 //char **argv;
