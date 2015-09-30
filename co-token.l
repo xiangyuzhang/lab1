@@ -24,21 +24,21 @@ character [a-zA-Z]+
 
 [ \t\n]+            /*eat white space*/
 
-"*".*\n               {
+"*".*               {
                          
                          yylval.string = strdup(yytext);
-                         /*printf("I am here in comments \n");*/
+                         //printf("I am here in comments \n");
                          BEGIN A;
-                         return COMMENT;
+                         //return COMMENT;
                       }
 
 
 
 <A>{NUMBER}            {                                          //used to match gate_index;
                            
-                           net_name = strdup(yytext);       
+                           //net_name = strdup(yytext);       
                             yylval.number = atoi(yytext);
-                           printf("\n%s ",net_name);
+                           //printf("\n%s ",net_name);
                            BEGIN B;
                            return NUMBER;
  
@@ -47,8 +47,8 @@ character [a-zA-Z]+
 
 <B>([0-9]+)gat             {                                      //  used to match 1gat, find 1gat
                               
-                               GATE_ASCI = strdup(yytext);
-                             printf("%s ", GATE_ASCI);
+                              // GATE_ASCI = strdup(yytext);
+                             //printf("%s ", GATE_ASCI);
                              yylval.string = strdup(yytext);
                              BEGIN C;
                               return GATENAME;
@@ -56,56 +56,60 @@ character [a-zA-Z]+
 
 <B>([0-9]+)fan             {                                        //  used to match 14fan
                               
-                             GATE_ASCI = strdup(yytext);
-                             printf("%s " , GATE_ASCI);
+                             //GATE_ASCI = strdup(yytext);
+                             //printf("%s " , GATE_ASCI);
                              yylval.string = strdup(yytext);
                              BEGIN D;
                             return FANNAME;
                             }
 
 <C>"inpt"                    {
-                             GATE_ASCI = strdup(yytext);
-                             figure_type = strdup(yytext);
-                             printf("%s ", GATE_ASCI);
+                             //GATE_ASCI = strdup(yytext);
+                             //figure_type = strdup(yytext);
+                             //printf("%s ", GATE_ASCI);
                              yylval.string = strdup(yytext);
+                             check = 0;
                              BEGIN E;
                             return INPT;
                             }
 
 <C>{GATETYPE}                 {
-                              GATE_ASCI = strdup(yytext);
-                              figure_type = strdup(yytext);
-                             printf("%s ", GATE_ASCI);
+                              //GATE_ASCI = strdup(yytext);
+                              //figure_type = strdup(yytext);
+                             //printf("%s ", GATE_ASCI);
+                             check = find_gatetype(yytext);
                              yylval.string = strdup(yytext);
                              BEGIN E;
                             return GATETYPE;
                             }
 
 <D>{GATENAME}                 {
-                             GATE_ASCI = strdup(yytext);
-                             printf("%s ", GATE_ASCI);
+                             //GATE_ASCI = strdup(yytext);
+                             //printf("%s ", GATE_ASCI);
                              yylval.string = strdup(yytext);
                              BEGIN F;
                             return SOURCE_GATE_TYPE;
                             }
 
 
-(">sa"[0-1])+               {
+(">sa"[0-1])({SPACE}(">sa"[0-1]))?      {
+                                      //printf("%s ", yytext);
+                                      //yylval.string = strdup(yytext);
                                       if(check == 1)
                                       {
-                                        printf("%s ", yytext);
+                                        //printf("%s ", yytext);
                                       yylval.string = strdup(yytext);
                                         BEGIN A;
                                       }
                                       else if(check == 2)
                                       {
-                                        printf("%s ", yytext);
+                                        //printf("%s ", yytext);
                                       yylval.string = strdup(yytext);
                                         BEGIN G;
                                       }
                                       else
                                       {
-                                        printf("%s ", yytext);
+                                        //printf("%s ", yytext);
                                       yylval.string = strdup(yytext);
                                         BEGIN A;
                                       }
@@ -114,8 +118,8 @@ character [a-zA-Z]+
                                 }
 <E>{NUMBER}{SPACE}{NUMBER} {                                  //used to match the number of fan, but in string
                           yylval.string = strdup(yytext);
-                          GATE_ASCI = strdup(yytext);
-                          printf("%s  ", GATE_ASCI); 
+                          //GATE_ASCI = strdup(yytext);
+                          //printf("%s  ", GATE_ASCI); 
                           BEGIN F;
                           return NUMBER_OF_FAN;
 
@@ -123,8 +127,8 @@ character [a-zA-Z]+
 
 <G>{NUMBER}{SPACE}{NUMBER} {                                  //used to find the source, but in string
                           yylval.string = strdup(yytext);
-                          GATE_ASCI = strdup(yytext);
-                          printf("%s \n", GATE_ASCI); 
+                          //GATE_ASCI = strdup(yytext);
+                          //printf("%s \n", GATE_ASCI); 
                           BEGIN A;
                           return SOURCE_OF_GATE;
 

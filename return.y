@@ -21,7 +21,6 @@ void yyerror(char *);
 	%token <string> NUMBER_OF_FAN
 	%token <string> SOURCE_OF_GATE
 	%token <string> SOURCE_GATE_TYPE
-	%token <string> COMMENT
 
 	%{
 		void yyerror(char *);
@@ -37,7 +36,10 @@ void yyerror(char *);
 			;
 
 	clause:
-			input|gate|fan;
+			input
+			|gate
+			|fan
+			;
 													
 	input:
 			NUMBER GATENAME INPT NUMBER_OF_FAN SA						{

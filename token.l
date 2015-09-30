@@ -91,25 +91,28 @@ character [a-zA-Z]+
 
 
 (">sa"[0-1])+               {
+                                      printf("%s ", yytext);
+                                      yylval.string = strdup(yytext);
+                                      /*
                                       if(check == 1)
                                       {
                                         printf("%s ", yytext);
-                                      //yylval.string = strdup(yytext);
+                                      yylval.string = strdup(yytext);
                                         BEGIN A;
                                       }
                                       else if(check == 2)
                                       {
                                         printf("%s ", yytext);
-                                      //yylval.string = strdup(yytext);
+                                      yylval.string = strdup(yytext);
                                         BEGIN G;
                                       }
                                       else
                                       {
                                         printf("%s ", yytext);
-                                      //yylval.string = strdup(yytext);
+                                      yylval.string = strdup(yytext);
                                         BEGIN A;
-                                      }
-                                      //return SA;
+                                      }*/
+                                      return SA;
 
                                 }
 <E>{NUMBER}{SPACE}{NUMBER} {                                  //used to match the number of fan, but in string
