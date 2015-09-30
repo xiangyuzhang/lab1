@@ -28,49 +28,46 @@ character [a-zA-Z]+
                          //yylval.string = strdup(yytext);
                          //printf("I am here in comments \n");
                          //return COMMENT;
+
                       }
 
 
 
-{NUMBER}            {                                          //used to match gate_index;
+{NUMBER}           {                                          //used to match gate_index;
                            
                            net_name = strdup(yytext);       
                             //yylval.number = atoi(yytext);
-                           printf("\n \n %s\t",net_name);
+                           printf("%s\t",net_name);
+                           BEGIN B;
                            //return NUMBER;
  
                         }
 
-{GATETYPE}                    {
+<C>{GATETYPE}                    {
                              GATE_ASCI = strdup(yytext);
                              figure_type = strdup(yytext);
-                             printf("%s ", GATE_ASCI);
-                             //yylval.string = strdup(yytext);
-                             check = find_gatetype(figure_type);
-                             if(check == 0)
+                             printf("gate type is: %s", GATE_ASCI);
+                             check = find_gatetype(yytext);
+                             printf(" this is check: %d ", check);
+                             if(check == 1)
                              {
-                              //printf("will go to input");
-                              //return INPT;
+                              BEGIN B;
                              }
-                             else if(check == 1)
+                             else 
                              {
-                              //printf("will go to fan");
-                              //return FAN;
+                              BEGIN D;
                              }
-                             else if(check == 2)
-                             {
-                              //printf("will go to gate");
-                              //return GATE;
+                             //return TYPE;
                              }
                             
-                            }
+                            
 
-
-{GATENAME}             {                                      //  used to match 1gat, find 1gat
+<B>{GATENAME}             {                                      //  used to match 1gat, find 1gat
                               
                              GATE_ASCI = strdup(yytext);
                              printf("%s\t", GATE_ASCI);
                              //yylval.string = strdup(yytext);
+                             BEGIN C;
                               //return GATENAME;
                             }
 
@@ -82,13 +79,15 @@ character [a-zA-Z]+
 (">sa"[0-1])({SPACE}(">sa"[0-1]))?      {
                                       printf("%s\n", yytext);
                                       //yylval.string = strdup(yytext);
+                                      //return SA;
                                           }
 
 
-{NUMBER}{SPACE}{NUMBER} {                                  //used to match the number of fan, but in string
+<D>{NUMBER}{SPACE}{NUMBER} {                                  //used to match the number of fan, but in string
                           //yylval.string = strdup(yytext);
                           GATE_ASCI = strdup(yytext);
                           printf("%s ", GATE_ASCI); 
+                          BEGIN A;
                           //return NUMBER_OF_FAN;
 
                         }
