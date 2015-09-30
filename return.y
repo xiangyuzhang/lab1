@@ -71,8 +71,9 @@ void yyerror(char *);
 																			printf("This is the fan!\n");
 																			printf("gateindex is: %d\n", $1);
 																			printf("gatename is : %s\n", $2);
-																			printf("source gate name is : %s\n", $3);
-																			printf("fault info is: %s\n", $4);		
+																			printf("from is : %s\n", $3);
+																			printf("source gate is: %s\n", $4);	
+																			printf("fault info is: %s\n", $5);	
 																			}
 			;
 
