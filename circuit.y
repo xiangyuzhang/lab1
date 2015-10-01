@@ -182,7 +182,7 @@ int gate_counter = 0;
 			EdgeNode *p = graph->vertexList[i].first;
 			while (p != NULL)
 			{
-				cout << graph->vertexList[p->vtxNO].Gate_name << "(" << p->weight << ")->";
+				cout << graph->vertexList[p->vtxNO].Gate_name << "->";
 				p = p->next;
 			}
 			cout << "\n";
@@ -190,7 +190,46 @@ int gate_counter = 0;
 		cout << "\n";
 	}
 
+	void AddEdge(Graph *graph, int v1, int v2)   //here, the v1 and v2 is the index of a gate, rather a gate_index!!!
+	{
+		if (graph == NULL) return;
+		if (v1 < 0 || v1 > graph->vertexes - 1) return;   //here it will consider whether the vertex is already existed, I need to change!!!
+		if (v2 < 0 || v2 > graph->vertexes - 1) return;
+		if (v1 == v2) return; //no loop is allowed  
 
+		EdgeNode *p = graph->vertexList[v1].first;
+		if (p == NULL)//is the first vertex's prvious is unknown
+		{
+			//can not be p = new EdgeNode;    
+			graph->vertexList[v1].first = new EdgeNode;  
+			graph->vertexList[v1].first->next = NULL;
+			graph->vertexList[v1].first->vtxNO = v2;
+			//graph->vertexList[v1].first->weight = weight;
+			graph->edges++;
+			graph->vertexList[v2].indegree++;
+			return;
+		}
+
+		while (p->next != NULL)//move to the last node    
+		{
+			if (p->vtxNO == v2)//already exits. checking all nodes but the last one    
+				return;
+
+			p = p->next;
+		}
+
+		if (p->vtxNO == v2)//already exits. checking the first or the last node    
+			return;
+
+		EdgeNode *node = new EdgeNode;
+		node->next = NULL;
+		node->vtxNO = v2;
+		//node->weight = weight;
+		p->next = node;//last node's next is the new node    
+
+		graph->edges++;
+		graph->vertexList[v2].indegree++;
+	}
 	int main(void){
 
 		yyparse();
@@ -202,6 +241,20 @@ int gate_counter = 0;
 		Graph *graph = NULL;
 		BuildGraph(graph, gate_counter);
 
+		PrintGraph(graph);
+
+		AddEdge(graph, 0, 1);
+		AddEdge(graph, 0, 2);
+		AddEdge(graph, 0, 3);
+		AddEdge(graph, 1, 3);
+		AddEdge(graph, 1, 4);
+		AddEdge(graph, 2, 5);
+		AddEdge(graph, 3, 2);
+		AddEdge(graph, 3, 5);
+		AddEdge(graph, 3, 6);
+		AddEdge(graph, 4, 3);
+		AddEdge(graph, 4, 6);
+		AddEdge(graph, 6, 5);
 		PrintGraph(graph);
 
 		return 0;
