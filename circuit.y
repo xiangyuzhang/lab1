@@ -8,10 +8,23 @@
 #include <sstream>
 #include <queue>
 #include <vector>
-using namespace std
-void yyerror(char *)
+extern "C" 
+using namespace std;
+void yyerror(char *);
 
-int gate_counter = 0
+struct Gate_class					//here I declare the gate class
+{
+	int Gate_index;
+	string Gate_name;
+	string Gate_type;
+	string Source_gate_name;
+	string Fault;
+	int Source_gate_index[2] = {-1,-1};
+
+}; 
+vector <Gate_class> gates(12000);
+
+int gate_counter = 0;
 %}
 
 	%union YYSTYPE {
@@ -65,7 +78,7 @@ int gate_counter = 0
 																			gates[gate_counter].Gate_type = $3;
 																			gates[gate_counter].Fault = $5;
 																			gates[gate_counter].Source_gate_index[0] = $6;
-																			gates[gate_counter].Source_gate_index[0] = $7;
+																			gates[gate_counter].Source_gate_index[1] = $7;
 																			gate_counter++;
 																			}	
 			;																											
@@ -97,7 +110,8 @@ int gate_counter = 0
 																			//printf("fault info is: %s\n", $5);
 																			gates[gate_counter].Gate_index = $1;	
 																			gates[gate_counter].Gate_name = $2;
-																			gates[gate_counter].Source_gate_name = $3;
+																			gates[gate_counter].Gate_type = $3;
+																			gates[gate_counter].Source_gate_name = $4;
 																			gates[gate_counter].Fault = $5;
 																			gate_counter++;		
 																			}
@@ -112,20 +126,15 @@ int gate_counter = 0
 		fprintf(stdout, "%s\n", s);
 	};
 
-	class Gate_class					//here I declare the gate class
-	{
-		int Gate_index;
-		string Gate_name;
-		string Gate_type;
-		string Source_gate_name;
-		string Fault;
-		vector<int> Source_gate_index;
 
-	}; 
-	vector <Gate_class> gates(12000);
 
 	int main(void){
 
 		yyparse();
+		cout << "this is the total number of gate: " << gate_counter<<endl;
+		for(int i; i<= gate_counter-1; i++)
+		{
+			cout<<gates[i].Gate_index << " " << gates[i].Gate_name << " " << gates[i].Gate_type << " " <<endl; 
+		}
 		return 0;
 	}

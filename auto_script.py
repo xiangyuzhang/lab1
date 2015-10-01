@@ -4,17 +4,17 @@ import os
 
 
 
-cmmd = "yacc -d return.y"
+cmmd = "yacc -d circuit.y"
 call(cmmd, shell=True)
-cmmd = "bison -d return.y"
+cmmd = "bison -d circuit.y"
 call(cmmd, shell=True)
 cmmd = "flex co-token.l"
 call(cmmd, shell=True)
-cmmd = "g++ -g -o coop lex.yy.c return.tab.c"
+cmmd = "g++ -g -o coop lex.yy.c circuit.tab.c"
 call(cmmd, shell=True)
 
-os.remove("return.tab.c")
-os.remove("return.tab.h")
+os.remove("circuit.tab.c")
+os.remove("circuit.tab.h")
 os.remove("lex.yy.c")
 os.remove("y.tab.c")
 os.remove("y.tab.h")
