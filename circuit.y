@@ -12,6 +12,13 @@ extern "C"
 using namespace std;
 void yyerror(char *);
 
+struct EdgeNode   
+{
+	int vtxNO;
+	int weight;
+	EdgeNode *next;   
+};
+
 struct Gate_class					//here I declare the gate class
 {
 	int Gate_index;
@@ -20,9 +27,23 @@ struct Gate_class					//here I declare the gate class
 	string Source_gate_name;
 	string Fault;
 	int Source_gate_index[2] = {-1,-1};
-
+	EdgeNode *first;				
+	bool visited;  
+	int distance;  
+	int path;  
+	int indegree;   
 }; 
-vector <Gate_class> gates(12000);
+
+Gate_class gates[12000];
+
+struct Graph
+{
+	Gate_class *vertexList;//the size of this array is equal to vertexes, point to a address:start of vertex array    
+	int vertexes;  //number of vertexes
+	int edges;
+};
+
+
 
 int gate_counter = 0;
 %}
@@ -126,15 +147,62 @@ int gate_counter = 0;
 		fprintf(stdout, "%s\n", s);
 	};
 
+	void BuildGraph(Graph *&graph, int n)
+	{
+		if (graph == NULL)
+		{
+			graph = new Graph;			//graph is a pointer, pointed for the start of the memory
+			graph->vertexList = &gates[n];				//pointer:verterList points to the address:start of set of nodes
+			graph->vertexes = n;			// number of vertexes is n
+			graph->edges = 0;
+			for (int i = 0; i < n; i++)
+			{
+				stringstream ss;
+				//ss << gates[i].Gate_name;
+				cout << gates[i].Gate_name << endl;
+				graph->vertexList[i].Gate_name = gates[i].Gate_name;
+				graph->vertexList[i].path = -1;
+				graph->vertexList[i].visited = false;
+				graph->vertexList[i].first = NULL;    //what is first??? 
+				graph->vertexList[i].indegree = 0;
+			}
+		}
+	}
+
+	void PrintGraph(Graph *graph)
+	{
+		if (graph == NULL)
+			return;
+		cout << "Vertex: " << graph->vertexes << "\n";
+		cout << "Edge: " << graph->edges << "\n";
+
+		for (int i = 0; i < graph->vertexes; i++)
+		{
+			cout << i + 1 << ": " << graph->vertexList[i].Gate_name << "->";
+			EdgeNode *p = graph->vertexList[i].first;
+			while (p != NULL)
+			{
+				cout << graph->vertexList[p->vtxNO].Gate_name << "(" << p->weight << ")->";
+				p = p->next;
+			}
+			cout << "\n";
+		}
+		cout << "\n";
+	}
 
 
 	int main(void){
 
 		yyparse();
-		cout << "this is the total number of gate: " << gate_counter<<endl;
-		for(int i; i<= gate_counter-1; i++)
+		//cout << "this is the total number of gate: " << gate_counter<<endl;
+		/*for(int j = 0; j<= gate_counter-1; j++)
 		{
-			cout<<gates[i].Gate_index << " " << gates[i].Gate_name << " " << gates[i].Gate_type << " " <<endl; 
-		}
+			cout<<gates[j].Gate_index << " " << gates[j].Gate_name << " " << gates[j].Gate_type << " " <<endl; 
+		}*/
+		Graph *graph = NULL;
+		BuildGraph(graph, gate_counter);
+
+		PrintGraph(graph);
+
 		return 0;
 	}
