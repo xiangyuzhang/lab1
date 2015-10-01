@@ -10,7 +10,7 @@ cmmd = "bison -d return.y"
 call(cmmd, shell=True)
 cmmd = "flex co-token.l"
 call(cmmd, shell=True)
-cmmd = "gcc -g -o coop lex.yy.c return.tab.c"
+cmmd = "g++ -g -o coop lex.yy.c return.tab.c"
 call(cmmd, shell=True)
 
 os.remove("return.tab.c")

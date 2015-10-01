@@ -1,6 +1,7 @@
 %{
-#include <strings.h>
-#include <stdlib.h>
+#include <string>
+#include <iostream>
+extern "C" 
 void yyerror(char *);
 #include "y.tab.h"
 extern YYSTYPE yylval;
@@ -10,6 +11,11 @@ int fanins;
 char *figure_type;
 char *net_name;
 char *GATE_ASCI;
+
+char *string_cmp_inpt = "inpt";
+char *string_cmp_from = "from";
+
+using namespace std;
 %}
 
 %start A B C D E F G
@@ -47,20 +53,20 @@ character [a-zA-Z]+
                              GATE_ASCI = strdup(yytext);
                              figure_type = strdup(yytext);
                              //printf("gate type is: %s", GATE_ASCI);
-                             check = find_gatetype(yytext);
+                             //check = find_gatetype(yytext);
                              yylval.string = strdup(yytext);
                              //printf(" this is check: %d ", check);
-                             if(check == 1)
+                             if(strcmp(yytext, string_cmp_from) == 0)
                              {
                               BEGIN B;
                               return FAN;
                              }
-                             else if(check == 0)
+                             else if(strcmp(yytext, string_cmp_inpt) == 0)
                              {
                               BEGIN D;
                               return INPT;
                              }
-                             else if(check == 2)
+                             else 
                              {
                               BEGIN D;
                               return GATE;
@@ -102,7 +108,7 @@ character [a-zA-Z]+
 
 %%
 
-int find_gatetype(char *string_pass){
+/*int find_gatetype(char *string_pass){
   char *string_cmp_inpt = "inpt";
   char *string_cmp_from = "from";
   if(strcmp(string_pass, string_cmp_inpt) == 0) {
@@ -116,7 +122,7 @@ int find_gatetype(char *string_pass){
   {
     return 2;
   }
-}
+}*/
 
 
 
