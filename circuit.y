@@ -14,7 +14,7 @@ void yyerror(char *);
 
 struct EdgeNode   
 {
-	int vtxNO;
+	int vtxNO;		//指向下一个点
 	int weight;
 	EdgeNode *next;   
 };
@@ -27,7 +27,9 @@ struct Gate_class					//here I declare the gate class
 	string Source_gate_name;
 	string Fault;
 	int Source_gate_index[2] = {-1,-1};
-	EdgeNode *first;				
+	EdgeNode *first;		//指向下一个线	
+	EdgeNode *second;
+	EdgeNode *third;	
 	bool visited;  
 	int distance;  
 	int path;  
@@ -71,7 +73,7 @@ int gate_counter = 0;
 	%%
 	program:
 			program	clause 												{
-																			printf("enter program!!\n");
+																			//printf("enter program!!\n");
 																			}
 			|
 			;
@@ -152,7 +154,7 @@ int gate_counter = 0;
 		if (graph == NULL)
 		{
 			graph = new Graph;			//graph is a pointer, pointed for the start of the memory
-			graph->vertexList = &gates[n];				//pointer:verterList points to the address:start of set of nodes
+			graph->vertexList = &gates[n];				//pointer:vertexList points to the address:start of set of nodes
 			graph->vertexes = n;			// number of vertexes is n
 			graph->edges = 0;
 			for (int i = 0; i < n; i++)
@@ -164,6 +166,8 @@ int gate_counter = 0;
 				graph->vertexList[i].path = -1;
 				graph->vertexList[i].visited = false;
 				graph->vertexList[i].first = NULL;    //what is first??? 
+				graph->vertexList[i].second = NULL; 
+				graph->vertexList[i].third = NULL; 
 				graph->vertexList[i].indegree = 0;
 			}
 		}
@@ -173,9 +177,30 @@ int gate_counter = 0;
 	{
 		if (graph == NULL)
 			return;
+
+		//考虑到一点多变，所以我的输出风格需要变化
+		for(int i = 0; i <= gate_counter-1; i++)
+		{
+			EdgeNode *p1 = graph->vertexList[i].first;
+			EdgeNode *p2 = graph->vertexList[i].second;
+			EdgeNode *p3 = graph->vertexList[i].third;
+			if (p1 != NULL)
+			{
+				cout << "gate index = " << gates[i].Gate_name << " , to " << graph->vertexList[p1->vtxNO].Gate_name << endl;
+			}
+			if (p2 != NULL)
+			{
+				cout << "gate index = " << gates[i].Gate_name << " , to " << graph->vertexList[p2->vtxNO].Gate_name << endl;
+			}
+			if (p3 != NULL)
+			{
+				cout << "gate index = " << gates[i].Gate_name << " , to " << graph->vertexList[p3->vtxNO].Gate_name << endl;
+			}
+		}
+
+		/*这部分是原文
 		cout << "Vertex: " << graph->vertexes << "\n";
 		cout << "Edge: " << graph->edges << "\n";
-
 		for (int i = 0; i < graph->vertexes; i++)
 		{
 			cout << i + 1 << ": " << graph->vertexList[i].Gate_name << "->";
@@ -187,16 +212,54 @@ int gate_counter = 0;
 			}
 			cout << "\n";
 		}
+		*/
 		cout << "\n";
 	}
 
-	void AddEdge(Graph *graph, int v1, int v2)   //here, the v1 and v2 is the index of a gate, rather a gate_index!!!
+	void AddEdge(Graph *graph, int v1, int v2)   //here, the v1 and v2 is the index of a gate, rather a gate_index!!! v1是source
 	{
 		if (graph == NULL) return;
-		if (v1 < 0 || v1 > graph->vertexes - 1) return;   //here it will consider whether the vertex is already existed, I need to change!!!
-		if (v2 < 0 || v2 > graph->vertexes - 1) return;
+		//if (v1 < 0 || v1 > graph->vertexes - 1) return;   //here it will consider whether the vertex is already existed, I need to change!!!
+		//if (v2 < 0 || v2 > graph->vertexes - 1) return;
 		if (v1 == v2) return; //no loop is allowed  
+		EdgeNode *p1 = graph->vertexList[v1].first;
+		EdgeNode *p2 = graph->vertexList[v1].second;
+		EdgeNode *p3 = graph->vertexList[v1].third;
 
+		//貌似我们允许线的多次连接，所以我做了下面的修改
+		if (p1 == NULL)//is the first vertex's prvious is unknown
+		{
+			//can not be p = new EdgeNode;    
+			graph->vertexList[v1].first = new EdgeNode;  
+			graph->vertexList[v1].first->next = NULL;
+			graph->vertexList[v1].first->vtxNO = v2;
+			//graph->vertexList[v1].first->weight = weight;
+			graph->edges++;
+			graph->vertexList[v2].indegree++;
+			return;
+		}
+		else if (p2 == NULL)
+		{
+			graph->vertexList[v1].second = new EdgeNode;  
+			graph->vertexList[v1].second->next = NULL;
+			graph->vertexList[v1].second->vtxNO = v2;
+			//graph->vertexList[v1].first->weight = weight;
+			graph->edges++;
+			graph->vertexList[v2].indegree++;
+			return;			
+		}
+		else if (p3 == NULL)
+		{
+			graph->vertexList[v1].third = new EdgeNode;  
+			graph->vertexList[v1].third->next = NULL;
+			graph->vertexList[v1].third->vtxNO = v2;
+			//graph->vertexList[v1].first->weight = weight;
+			graph->edges++;
+			graph->vertexList[v2].indegree++;
+			return;			
+		}
+		/*
+		//下面的注释是原文
 		EdgeNode *p = graph->vertexList[v1].first;
 		if (p == NULL)//is the first vertex's prvious is unknown
 		{
@@ -229,6 +292,7 @@ int gate_counter = 0;
 
 		graph->edges++;
 		graph->vertexList[v2].indegree++;
+		*/
 	}
 	int main(void){
 
@@ -240,9 +304,68 @@ int gate_counter = 0;
 		}*/
 		Graph *graph = NULL;
 		BuildGraph(graph, gate_counter);
+		cout << "Vertex: " << graph->vertexes << "\n";
+		cout << "Edge: " << graph->edges << "\n";
+		//PrintGraph(graph);
+		//now I need to carefully arrange edges
 
-		PrintGraph(graph);
+		for(int i = 0; i <= gate_counter-1; i++)
+		{
+			if(gates[i].Gate_type == "from")
+			{	cout << "find a fan with index: " << gates[i].Gate_index << endl;
+				for(int j = 0; j <= gate_counter-1; j++)
+				{
+					if(gates[j].Gate_name == gates[i].Source_gate_name)
+					{	cout << "find its origin " << gates[j].Gate_index << endl;
+						AddEdge(graph, j, i);
+						cout << "edge between: " << gates[j].Gate_name << " and " << gates[i].Gate_name << " Connected!" << endl; 
+						continue;
+					}
+				}
 
+			}
+/*
+			else if(gates[i].Gate_type != "inpt")
+			{
+				for(int k = 0; k <= gate_counter-1; k++)
+				{
+					if(gates[k].Gate_index == gates[i].Source_gate_index[0])  //find a gate match the Source_gate_index
+					{
+						if(gates[k].Gate_type == "from")  //check whether it is a fan
+						{
+							for(int j = 0; j <= gate_counter-1; j++)
+							{
+								if(gates[j].Gate_name == gates[k].Gate_name) // if it is fan, check for its original and connect 
+								{
+									AddEdge(graph, j, k);
+									continue;
+								}
+							}
+						}
+					}
+
+					else if(gates[k].Gate_index == gates[i].Source_gate_index[1])  //find a gate match the Source_gate_index
+						{
+							if(gates[k].Gate_type == "from")  //check whether it is a fan
+							{
+								for(int j = 0; j <= gate_counter-1; j++)
+								{
+									if(gates[j].Gate_name == gates[k].Gate_name) // if it is fan, check for its original and connect 
+									{
+										AddEdge(graph, j, k);
+										continue;
+									}
+								}
+							}
+						}
+				}
+	
+			}
+			*/
+		}
+		cout << "Vertex: " << graph->vertexes << "\n";
+		cout << "Edge: " << graph->edges << "\n";
+		/*
 		AddEdge(graph, 0, 1);
 		AddEdge(graph, 0, 2);
 		AddEdge(graph, 0, 3);
@@ -255,7 +378,8 @@ int gate_counter = 0;
 		AddEdge(graph, 4, 3);
 		AddEdge(graph, 4, 6);
 		AddEdge(graph, 6, 5);
+		*/
 		PrintGraph(graph);
-
+		
 		return 0;
 	}
