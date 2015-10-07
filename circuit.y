@@ -161,7 +161,7 @@ int gate_counter = 0;
 			{
 				stringstream ss;
 				//ss << gates[i].Gate_name;
-				cout << gates[i].Gate_name << endl;
+				//cout << gates[i].Gate_name << endl;
 				graph->vertexList[i].Gate_name = gates[i].Gate_name;
 				graph->vertexList[i].path = -1;
 				graph->vertexList[i].visited = false;
@@ -304,6 +304,7 @@ int gate_counter = 0;
 		}*/
 		Graph *graph = NULL;
 		BuildGraph(graph, gate_counter);
+		cout << "after build graph" << endl;
 		cout << "Vertex: " << graph->vertexes << "\n";
 		cout << "Edge: " << graph->edges << "\n";
 		//PrintGraph(graph);
@@ -312,56 +313,35 @@ int gate_counter = 0;
 		for(int i = 0; i <= gate_counter-1; i++)
 		{
 			if(gates[i].Gate_type == "from")
-			{	cout << "find a fan with index: " << gates[i].Gate_index << endl;
+			{	//cout << "find a fan with index: " << gates[i].Gate_index << endl;
 				for(int j = 0; j <= gate_counter-1; j++)
 				{
 					if(gates[j].Gate_name == gates[i].Source_gate_name)
-					{	cout << "find its origin " << gates[j].Gate_index << endl;
+					{	//cout << "find its origin " << gates[j].Gate_index << endl;
 						AddEdge(graph, j, i);
-						cout << "edge between: " << gates[j].Gate_name << " and " << gates[i].Gate_name << " Connected!" << endl; 
-						continue;
+						//cout << "edge between: " << gates[j].Gate_name << " and " << gates[i].Gate_name << " Connected!" << endl; 
 					}
 				}
 
 			}
-/*
-			else if(gates[i].Gate_type != "inpt")
+
+			else if(gates[i].Gate_type != "inpt")  //现在找到了gate
 			{
-				for(int k = 0; k <= gate_counter-1; k++)
+				//cout << "the gate is: " << gates[i].Gate_name << " with source index: " << gates[i].Source_gate_index[0] << " and " << gates[i].Source_gate_index[1] << endl;
+				for (int j = 0; j <= gate_counter-1; j++)
 				{
-					if(gates[k].Gate_index == gates[i].Source_gate_index[0])  //find a gate match the Source_gate_index
+					if(gates[j].Gate_index == gates[i].Source_gate_index[0])
 					{
-						if(gates[k].Gate_type == "from")  //check whether it is a fan
-						{
-							for(int j = 0; j <= gate_counter-1; j++)
-							{
-								if(gates[j].Gate_name == gates[k].Gate_name) // if it is fan, check for its original and connect 
-								{
-									AddEdge(graph, j, k);
-									continue;
-								}
-							}
-						}
+						AddEdge(graph, j, i);
 					}
-
-					else if(gates[k].Gate_index == gates[i].Source_gate_index[1])  //find a gate match the Source_gate_index
-						{
-							if(gates[k].Gate_type == "from")  //check whether it is a fan
-							{
-								for(int j = 0; j <= gate_counter-1; j++)
-								{
-									if(gates[j].Gate_name == gates[k].Gate_name) // if it is fan, check for its original and connect 
-									{
-										AddEdge(graph, j, k);
-										continue;
-									}
-								}
-							}
-						}
+					if(gates[j].Gate_index == gates[i].Source_gate_index[1])
+					{
+						AddEdge(graph, j, i);
+					}
 				}
-	
 			}
-			*/
+
+
 		}
 		cout << "Vertex: " << graph->vertexes << "\n";
 		cout << "Edge: " << graph->edges << "\n";
