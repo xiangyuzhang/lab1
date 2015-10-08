@@ -445,6 +445,7 @@ Gate_class next_gate_is[2];
 	void Generate_result(Graph *graph, int size)
 	{
 		int temp1;
+		string temp2;
 		for(int i = 0; i<= graph->vertexes-1; i++)
 		{
 			if(graph->vertexList[i].Gate_type == "from")
@@ -460,13 +461,18 @@ Gate_class next_gate_is[2];
 				{
 					cout << "PI" << " ";
 				}
-				/*
+				
 				else if((graph->vertexList[i].Gate_type != "inpt")&&(graph->vertexList[i].Gate_type != "from"))
 				{
-					//cout << transform(graph->vertexList[i].Gate_type.begin(), graph->vertexList[i].Gate_type.end(), graph->vertexList[i].Gate_type.begin(), ::toupper);
-					cout << graph->vertexList[i].Gate_type;
+					temp2 = graph->vertexList[i].Gate_type;
+					if(temp2 == "nand")		cout << "NAND" << " ";
+					if(temp2 == "nor")		cout << "NOR" << " ";
+					if(temp2 == "or")		cout << "OR" << " ";
+					if(temp2 == "xor")		cout << "XOR" << " ";	
+					if(temp2 == "and")		cout << "AND" << " ";				
+
 				}
-				*/
+				
 				//这里输出下一个gate的index
 				if(graph->vertexList[i].third != NULL)
 				{
@@ -476,7 +482,7 @@ Gate_class next_gate_is[2];
 				{
 					temp1 = graph->vertexList[temp1].first->vtxNO;
 				}
-				cout << graph->vertexList[temp1].Gate_name << " ";
+				cout << graph->vertexList[temp1].Gate_index << " ";
 				}
 
 
@@ -487,7 +493,7 @@ Gate_class next_gate_is[2];
 				{
 					temp1 = graph->vertexList[temp1].first->vtxNO;
 				}
-				cout << graph->vertexList[temp1].Gate_name << " ";
+				cout << graph->vertexList[temp1].Gate_index << " ";
 				//cout << graph->vertexList[temp1].Gate_index << " ";
 				}
 
@@ -499,7 +505,7 @@ Gate_class next_gate_is[2];
 				{
 					temp1 = graph->vertexList[temp1].first->vtxNO;
 				}			
-				cout << graph->vertexList[temp1].Gate_name << " ";
+				cout << graph->vertexList[temp1].Gate_index << " ";
 				//cout << graph->vertexList[temp1].Gate_index << " ";
 				}
 
