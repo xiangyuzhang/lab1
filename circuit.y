@@ -48,6 +48,8 @@ struct Graph
 
 
 int gate_counter = 0;
+Gate_class next_gate_is[2];
+
 %}
 
 	%union YYSTYPE {
@@ -159,10 +161,17 @@ int gate_counter = 0;
 			graph->edges = 0;
 			for (int i = 0; i < n; i++)
 			{
+
 				stringstream ss;
 				//ss << gates[i].Gate_name;
 				//cout << gates[i].Gate_name << endl;
 				graph->vertexList[i].Gate_name = gates[i].Gate_name;
+				graph->vertexList[i].Gate_type = gates[i].Gate_type;
+				graph->vertexList[i].Gate_index = gates[i].Gate_index;
+				graph->vertexList[i].Source_gate_name = gates[i].Source_gate_name;
+				graph->vertexList[i].Fault = gates[i].Fault;
+				graph->vertexList[i].Source_gate_index[0] = gates[i].Source_gate_index[0];
+				graph->vertexList[i].Source_gate_index[1] = gates[i].Source_gate_index[1];
 				graph->vertexList[i].path = -1;
 				graph->vertexList[i].visited = false;
 				graph->vertexList[i].first = NULL;    //what is first??? 
@@ -294,6 +303,160 @@ int gate_counter = 0;
 		graph->vertexList[v2].indegree++;
 		*/
 	}
+	//这里是排序算法
+		void Swap(Gate_class *array, int x, int y)
+	{
+	    Gate_class temp = array[x];
+	    array[x] = array[y];
+	    array[y] = temp;
+	}
+		void InsertSort(Gate_class *array, int size)
+	{
+	    for(int i = 1; i < size; i++)
+	    {
+	        for(int j = i; j > 0; j--)
+	        {
+	            if(array[j].Gate_index < array[j - 1].Gate_index)
+	            {
+	                Swap(array, j, j-1);
+	            }
+	        }
+	    }
+	}
+
+	void BFS(Graph *graph)
+	{
+	if(graph == NULL)
+		return;
+	cout << "BFS\n";
+
+	for (int i = 0; i < graph->vertexes; i++)  //double check all the gates are unvisited
+		graph->vertexList[i].visited = false;
+
+	
+	queue<int> QVertex;
+
+	for (int i = 0; i < graph->vertexes; i++)  //标记目前没有便利过的gate为visited，并且输出名字
+	{
+		//cout<<"get in for"<<endl;
+		if (!graph->vertexList[i].visited)  
+		{
+			//cout<<"get in if"<<endl;
+			QVertex.push(i);
+			//cout<<"i am here" << graph->vertexList[i].Gate_type;
+			cout << graph->vertexList[i].Gate_name << " " << graph->vertexList[i].Gate_type << " ";
+			graph->vertexList[i].visited = true;
+			//cout<<"this is the current size of queue:" << QVertex.size() << endl;
+		}
+		if(QVertex.size() >> 0)
+		{
+			//cout<<"get in while"<<endl;
+			int vtxNO = QVertex.front();
+			QVertex.pop();
+			EdgeNode *p1 = graph->vertexList[vtxNO].first;  //找到放入元素出边
+			EdgeNode *p2 = graph->vertexList[vtxNO].second;
+			EdgeNode *p3 = graph->vertexList[vtxNO].third;
+			//cout<<"this is the current size of queue:" << QVertex.size() << endl;
+			
+			if(p1 != NULL)
+			{
+				if (!graph->vertexList[p1->vtxNO].visited)
+				{	
+					//cout << graph->vertexList[i].Gate_name << " " << graph->vertexList[i].Gate_type << " ";
+					cout << graph->vertexList[p1->vtxNO].Gate_index << " " << endl;
+					graph->vertexList[p1->vtxNO].visited = true;
+					QVertex.push(p1->vtxNO);
+				}
+				p1 = p1->next;
+			}
+
+			if(p2 != NULL)
+			{
+				if (!graph->vertexList[p2->vtxNO].visited)
+				{
+										
+					cout << graph->vertexList[p2->vtxNO].Gate_index << " " << endl;
+
+					graph->vertexList[p2->vtxNO].visited = true;
+					QVertex.push(p2->vtxNO);
+				}
+				p2 = p2->next;
+			}
+
+			if(p3 != NULL)
+			{
+				if (!graph->vertexList[p3->vtxNO].visited)
+				{
+										
+					cout << graph->vertexList[p3->vtxNO].Gate_index << " " << endl;
+
+					graph->vertexList[p3->vtxNO].visited = true;
+					QVertex.push(p3->vtxNO);
+				}
+				p3 = p3->next;
+			}
+
+			//cout<<"get out loop"<<endl;
+
+		}
+	}
+
+	cout << "\n";
+	}
+	void Get_next_gate(Graph *graph, Gate_class gate)
+	{
+		int index = 0;
+		if(gate.first != NULL)
+		{
+		 	next_gate_is[index] = graph->vertexList[gate.first->vtxNO];
+			if(next_gate_is[index].Gate_type == "from")
+			{
+				next_gate_is[index] = graph->vertexList[next_gate_is[index].first->vtxNO];
+				index++;
+			}
+
+
+		}
+
+		if(gate.second != NULL)
+		{
+		 	next_gate_is[index] = graph->vertexList[gate.second->vtxNO];
+			if(next_gate_is[index].Gate_type == "from")
+			{
+				next_gate_is[index] = graph->vertexList[next_gate_is[index].second->vtxNO];
+				index++;
+			}
+
+		}
+
+		if(gate.third != NULL)
+		{
+		 	next_gate_is[index] = graph->vertexList[gate.second->vtxNO];
+			if(next_gate_is[index].Gate_type == "from")
+			{
+				next_gate_is[index] = graph->vertexList[next_gate_is[index].second->vtxNO];
+				index++;
+			}
+
+		}
+
+	}
+	void Generate_result(Graph *graph, int size)
+	{
+		for(int i = 0; i<= size-1; i++)
+		{
+			cout << graph->vertexList[i].Gate_index<<" ";
+			if(graph->vertexList[i].Gate_type == "inpt")
+			{
+				cout << "PI" << " ";
+			}
+			for(int index = 0; index <= 1; index++)
+			{
+			cout << next_gate_is[index].Gate_index;				
+			}
+			cout<<endl;
+		}
+	}
 	int main(void){
 
 		yyparse();
@@ -303,12 +466,14 @@ int gate_counter = 0;
 			cout<<gates[j].Gate_index << " " << gates[j].Gate_name << " " << gates[j].Gate_type << " " <<endl; 
 		}*/
 		Graph *graph = NULL;
+		//Gate_class next[];
 		BuildGraph(graph, gate_counter);
 		cout << "after build graph" << endl;
 		cout << "Vertex: " << graph->vertexes << "\n";
 		cout << "Edge: " << graph->edges << "\n";
 		//PrintGraph(graph);
 		//now I need to carefully arrange edges
+
 
 		for(int i = 0; i <= gate_counter-1; i++)
 		{
@@ -360,6 +525,15 @@ int gate_counter = 0;
 		AddEdge(graph, 6, 5);
 		*/
 		PrintGraph(graph);
-		
+		//InsertSort(graph->vertexList, gate_counter);
+		cout<<"Here is the gates name, index and type:"<<endl;
+		for(int i = 0; i<=gate_counter-1; i++)
+		{
+			cout<<graph->vertexList[i].Gate_name<<" ";
+			cout<<graph->vertexList[i].Gate_index<<" ";
+			cout<<graph->vertexList[i].Gate_type<<endl;
+		}
+		//BFS(graph);
+		Generate_result(graph, gate_counter);
 		return 0;
 	}
