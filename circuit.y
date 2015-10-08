@@ -442,10 +442,41 @@ Gate_class next_gate_is[2];
 		}
 
 	}
+
+	void Add_PO(Graph *graph)  //遍历整个图，寻找哪里需要加上新的PO
+	{
+		cout<<"here";
+		Gate_class temp1;
+		cout<<"here";
+		int start_index = 20001;
+		cout<<"here";
+		for(int x = 0; x <= graph->vertexes-1; x++)
+		{
+			cout<<"here";
+			temp1 = graph->vertexList[x];
+			cout<<"This is: " << temp1.Gate_name << " " << "to " << graph->vertexList[temp1.first->vtxNO].Gate_name;
+			if(temp1.first== NULL)   //意思就是，这个gate没有出边
+			{
+				//现在需要在原来的gates【】里面加上新的node，然后重新生成图，之后加上边
+				//加上新的gates
+				cout << " Here" <<endl;
+				gates[gate_counter].Gate_index = start_index;
+				gates[gate_counter].Gate_type = "PO";
+				gates[gate_counter].Gate_name = "PO";
+				gate_counter++;
+				//重新生成图
+			}
+
+		}
+//		BuildGraph(graph, gate_counter);
+//		//加上边
+//		AddEdge(graph, i, start_index);
+	}
 	void Generate_result(Graph *graph, int size)
 	{
 		int temp1;
 		string temp2;
+		int  PO_index = 20001;
 		for(int i = 0; i<= graph->vertexes-1; i++)
 		{
 			if(graph->vertexList[i].Gate_type == "from")
@@ -509,8 +540,18 @@ Gate_class next_gate_is[2];
 				//cout << graph->vertexList[temp1].Gate_index << " ";
 				}
 
-			     cout<<";"<<endl;
+				if((graph->vertexList[i].first == NULL)&&(graph->vertexList[i].second == NULL)&&(graph->vertexList[i].third == NULL))
+				{
+					cout << PO_index;
+					PO_index++ ;
+				}
+			    cout<<";"<<endl;
 			}
+		}
+
+		for(int i = PO_index-1; i>= 20001; i--)
+		{
+			cout << "PO" << " " << i << " ;" <<endl;
 		}
 	}
 	int main(void){
@@ -523,18 +564,12 @@ Gate_class next_gate_is[2];
 			cout<<gates[j].Gate_index << " " << gates[j].Gate_name << " " << gates[j].Gate_type << " " <<endl; 
 		}*/
 		Graph *graph = NULL;
-		//Gate_class next[];
+		int start_index = 20001;
 		InsertSort(gates, gate_counter);
 		cout << "Data is cleaned up!" << endl;
 		BuildGraph(graph, gate_counter);
 
-		cout<<"Here is the gates name, index and type:"<<endl;
-		for(int i = 0; i<=gate_counter-1; i++)
-		{
-			cout<<graph->vertexList[i].Gate_name<<" ";
-			cout<<graph->vertexList[i].Gate_index<<" ";
-			cout<<graph->vertexList[i].Gate_type<<endl;
-		}
+
 		cout << "Graph is built!" << endl;
 		cout << "after build graph" << endl;
 		cout << "Vertex: " << graph->vertexes << "\n";
@@ -576,7 +611,16 @@ Gate_class next_gate_is[2];
 		}
 		cout <<"Edgeds are added" << endl;
 
-		
+		cout<<"here";
+		//Add_PO(graph);
+		cout << "PO is added" <<endl;
+		//cout<<"Here is the gates name, index and type:"<<endl;
+		//for(int i = 0; i<=gate_counter-1; i++)
+		//{
+		//	cout<<graph->vertexList[i].Gate_name<<" ";
+		//	cout<<graph->vertexList[i].Gate_index<<" ";
+		//	cout<<graph->vertexList[i].Gate_type<<endl;
+		//}
 		cout << "Vertex: " << graph->vertexes << "\n";
 		cout << "Edge: " << graph->edges << "\n";
 		/*
