@@ -8,6 +8,7 @@
 #include <sstream>
 #include <queue>
 #include <vector>
+#include <cctype>
 extern "C" 
 using namespace std;
 void yyerror(char *);
@@ -187,7 +188,7 @@ Gate_class next_gate_is[2];
 		if (graph == NULL)
 			return;
 
-		//考虑到一点多变，所以我的输出风格需要变化
+		//考虑到一点多边，所以我的输出风格需要变化
 		for(int i = 0; i <= gate_counter-1; i++)
 		{
 			EdgeNode *p1 = graph->vertexList[i].first;
@@ -443,23 +444,73 @@ Gate_class next_gate_is[2];
 	}
 	void Generate_result(Graph *graph, int size)
 	{
-		for(int i = 0; i<= size-1; i++)
+		int temp1;
+		for(int i = 0; i<= graph->vertexes-1; i++)
 		{
-			cout << graph->vertexList[i].Gate_index<<" ";
-			if(graph->vertexList[i].Gate_type == "inpt")
+			if(graph->vertexList[i].Gate_type == "from")
 			{
-				cout << "PI" << " ";
+				continue;
 			}
-			for(int index = 0; index <= 1; index++)
+			else
 			{
-			cout << next_gate_is[index].Gate_index;				
+				//这里输出index
+				cout << graph->vertexList[i].Gate_index << " ";
+				//这里输出种类
+				if(graph->vertexList[i].Gate_type == "inpt")
+				{
+					cout << "PI" << " ";
+				}
+				/*
+				else if((graph->vertexList[i].Gate_type != "inpt")&&(graph->vertexList[i].Gate_type != "from"))
+				{
+					//cout << transform(graph->vertexList[i].Gate_type.begin(), graph->vertexList[i].Gate_type.end(), graph->vertexList[i].Gate_type.begin(), ::toupper);
+					cout << graph->vertexList[i].Gate_type;
+				}
+				*/
+				//这里输出下一个gate的index
+				if(graph->vertexList[i].third != NULL)
+				{
+				temp1 = graph->vertexList[i].third->vtxNO;    //need change
+				//cout << graph->vertexList[temp1].Gate_index << " ";
+				if(graph->vertexList[temp1].Gate_type == "from")
+				{
+					temp1 = graph->vertexList[temp1].first->vtxNO;
+				}
+				cout << graph->vertexList[temp1].Gate_name << " ";
+				}
+
+
+				if(graph->vertexList[i].second != NULL)
+				{
+				temp1 = graph->vertexList[i].second->vtxNO;    //need change
+				if(graph->vertexList[temp1].Gate_type == "from")
+				{
+					temp1 = graph->vertexList[temp1].first->vtxNO;
+				}
+				cout << graph->vertexList[temp1].Gate_name << " ";
+				//cout << graph->vertexList[temp1].Gate_index << " ";
+				}
+
+
+				if(graph->vertexList[i].first != NULL)
+				{
+				temp1 = graph->vertexList[i].first->vtxNO;    //need change
+				if(graph->vertexList[temp1].Gate_type == "from")
+				{
+					temp1 = graph->vertexList[temp1].first->vtxNO;
+				}			
+				cout << graph->vertexList[temp1].Gate_name << " ";
+				//cout << graph->vertexList[temp1].Gate_index << " ";
+				}
+
+			     cout<<";"<<endl;
 			}
-			cout<<endl;
 		}
 	}
 	int main(void){
 
 		yyparse();
+		cout <<"Data collect successfully!" <<endl;
 		//cout << "this is the total number of gate: " << gate_counter<<endl;
 		/*for(int j = 0; j<= gate_counter-1; j++)
 		{
@@ -467,7 +518,18 @@ Gate_class next_gate_is[2];
 		}*/
 		Graph *graph = NULL;
 		//Gate_class next[];
+		InsertSort(gates, gate_counter);
+		cout << "Data is cleaned up!" << endl;
 		BuildGraph(graph, gate_counter);
+
+		cout<<"Here is the gates name, index and type:"<<endl;
+		for(int i = 0; i<=gate_counter-1; i++)
+		{
+			cout<<graph->vertexList[i].Gate_name<<" ";
+			cout<<graph->vertexList[i].Gate_index<<" ";
+			cout<<graph->vertexList[i].Gate_type<<endl;
+		}
+		cout << "Graph is built!" << endl;
 		cout << "after build graph" << endl;
 		cout << "Vertex: " << graph->vertexes << "\n";
 		cout << "Edge: " << graph->edges << "\n";
@@ -505,9 +567,10 @@ Gate_class next_gate_is[2];
 					}
 				}
 			}
-
-
 		}
+		cout <<"Edgeds are added" << endl;
+
+		
 		cout << "Vertex: " << graph->vertexes << "\n";
 		cout << "Edge: " << graph->edges << "\n";
 		/*
@@ -525,14 +588,9 @@ Gate_class next_gate_is[2];
 		AddEdge(graph, 6, 5);
 		*/
 		PrintGraph(graph);
-		//InsertSort(graph->vertexList, gate_counter);
+		//insertSort(gates, gate_counter);
 		cout<<"Here is the gates name, index and type:"<<endl;
-		for(int i = 0; i<=gate_counter-1; i++)
-		{
-			cout<<graph->vertexList[i].Gate_name<<" ";
-			cout<<graph->vertexList[i].Gate_index<<" ";
-			cout<<graph->vertexList[i].Gate_type<<endl;
-		}
+
 		//BFS(graph);
 		Generate_result(graph, gate_counter);
 		return 0;
