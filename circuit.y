@@ -556,6 +556,39 @@ Gate_class next_gate_is[2];
 			out << "PO" << " " << i << " ;" <<endl;
 		}
 	}
+
+	void Fault_generation(Graph *graph, int size)
+	{
+		bool fault_list[2] = {-1, -1};
+		int s;
+
+	
+		for(int i = 0; i<=size-1; i++)
+		{
+			cout<<graph->vertexList[i].Gate_index<<" "<<graph->vertexList[i].Fault;
+			if(graph->vertexList[i].Fault.find("sa0") != std::string::npos)
+			{
+				//fault_list[0] = '0';
+				//s = 0;
+				cout<< "found sa0 ";
+			}
+
+			if(graph->vertexList[i].Fault.find("sa1") != std::string::npos)
+			{
+				//fault_list[1] = '1';
+				//s = 1;
+				cout << "found sa1";
+			}
+//			for(int j = 0; j<=s; j++)
+//			{
+//				cout<<" "<<fault_list[j];
+//			}
+
+			cout << endl;
+		s = -1;
+		}
+
+	}
 	int main(void){
 
 		yyparse();
@@ -640,10 +673,10 @@ Gate_class next_gate_is[2];
 		AddEdge(graph, 6, 5);
 		*/
 		PrintGraph(graph);
-		//insertSort(gates, gate_counter);
-		cout<<"Here is the gates name, index and type:"<<endl;
+
 
 		//BFS(graph);
 		Generate_result(graph, gate_counter);
+	//	Fault_generation(graph, gate_counter);
 		return 0;
 	}
