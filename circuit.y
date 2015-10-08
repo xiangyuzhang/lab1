@@ -9,6 +9,7 @@
 #include <queue>
 #include <vector>
 #include <cctype>
+#include <fstream>
 extern "C" 
 using namespace std;
 void yyerror(char *);
@@ -443,7 +444,7 @@ Gate_class next_gate_is[2];
 
 	}
 
-	void Add_PO(Graph *graph)  //遍历整个图，寻找哪里需要加上新的PO
+	void Add_PO(Graph *graph)  //遍历整个图，寻找哪里需要加上新的PO  -------->没有完成好
 	{
 		cout<<"here";
 		Gate_class temp1;
@@ -477,6 +478,7 @@ Gate_class next_gate_is[2];
 		int temp1;
 		string temp2;
 		int  PO_index = 20001;
+		ofstream out("out.txt");
 		for(int i = 0; i<= graph->vertexes-1; i++)
 		{
 			if(graph->vertexList[i].Gate_type == "from")
@@ -486,21 +488,21 @@ Gate_class next_gate_is[2];
 			else
 			{
 				//这里输出index
-				cout << graph->vertexList[i].Gate_index << " ";
+				out << graph->vertexList[i].Gate_index << " ";
 				//这里输出种类
 				if(graph->vertexList[i].Gate_type == "inpt")
 				{
-					cout << "PI" << " ";
+					out << "PI" << " ";
 				}
 				
 				else if((graph->vertexList[i].Gate_type != "inpt")&&(graph->vertexList[i].Gate_type != "from"))
 				{
 					temp2 = graph->vertexList[i].Gate_type;
-					if(temp2 == "nand")		cout << "NAND" << " ";
-					if(temp2 == "nor")		cout << "NOR" << " ";
-					if(temp2 == "or")		cout << "OR" << " ";
-					if(temp2 == "xor")		cout << "XOR" << " ";	
-					if(temp2 == "and")		cout << "AND" << " ";				
+					if(temp2 == "nand")		out << "NAND" << " ";
+					if(temp2 == "nor")		out << "NOR" << " ";
+					if(temp2 == "or")		out << "OR" << " ";
+					if(temp2 == "xor")		out << "XOR" << " ";	
+					if(temp2 == "and")		out << "AND" << " ";				
 
 				}
 				
@@ -513,7 +515,7 @@ Gate_class next_gate_is[2];
 				{
 					temp1 = graph->vertexList[temp1].first->vtxNO;
 				}
-				cout << graph->vertexList[temp1].Gate_index << " ";
+				out << graph->vertexList[temp1].Gate_index << " ";
 				}
 
 
@@ -524,7 +526,7 @@ Gate_class next_gate_is[2];
 				{
 					temp1 = graph->vertexList[temp1].first->vtxNO;
 				}
-				cout << graph->vertexList[temp1].Gate_index << " ";
+				out << graph->vertexList[temp1].Gate_index << " ";
 				//cout << graph->vertexList[temp1].Gate_index << " ";
 				}
 
@@ -536,22 +538,22 @@ Gate_class next_gate_is[2];
 				{
 					temp1 = graph->vertexList[temp1].first->vtxNO;
 				}			
-				cout << graph->vertexList[temp1].Gate_index << " ";
+				out << graph->vertexList[temp1].Gate_index << " ";
 				//cout << graph->vertexList[temp1].Gate_index << " ";
 				}
 
 				if((graph->vertexList[i].first == NULL)&&(graph->vertexList[i].second == NULL)&&(graph->vertexList[i].third == NULL))
 				{
-					cout << PO_index;
+					out << PO_index;
 					PO_index++ ;
 				}
-			    cout<<";"<<endl;
+			    out<<";"<<endl;
 			}
 		}
 
 		for(int i = PO_index-1; i>= 20001; i--)
 		{
-			cout << "PO" << " " << i << " ;" <<endl;
+			out << "PO" << " " << i << " ;" <<endl;
 		}
 	}
 	int main(void){
