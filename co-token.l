@@ -11,7 +11,7 @@ int fanins;
 char *figure_type;
 char *net_name;
 char *GATE_ASCI;
-
+int Is_gate;;
 char *string_cmp_inpt = "inpt";
 char *string_cmp_from = "from";
 
@@ -27,6 +27,12 @@ SPACE  [ \t\n]+
 
 character [a-zA-Z]+  
 %%
+
+<H>[{SPACE}{NUMBER}]+       {
+                                yylval.string = strdup(yytext);
+                                BEGIN A;
+                                return SOURCE;
+                              }
 
 [ \t\n]+            /*eat white space*/
 
@@ -68,6 +74,7 @@ character [a-zA-Z]+
                              }
                              else 
                              {
+                              Is_gate = 1;
                               BEGIN D;
                               return GATE;
                              }
@@ -101,10 +108,19 @@ character [a-zA-Z]+
                           yylval.string = strdup(yytext);
                           GATE_ASCI = strdup(yytext);
                           //printf("%s ", GATE_ASCI); 
-                          BEGIN A;
+                          if(Is_gate == 1)
+                          {
+                            BEGIN H;
+                          }
+                          else
+                          {
+                            BEGIN A;                           
+                          }
                           return NUMBER_OF_FAN;
 
                         }
+
+[ \t\n]+            /*eat white space*/
 
 %%
 
