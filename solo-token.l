@@ -34,11 +34,13 @@ SPACE [ \t\n]+
                          //yylval.string = strdup(yytext);
                          
                          //return COMMENT;
+                         cout << "COMMENT" << endl;
                           BEGIN A;
                       }
 
 <I>(">sa"[0-1])({SPACE}(">sa"[0-1]))?      {
-                                      cout << yytext << " ";
+                                      //cout << yytext << " ";
+                                      cout << "(I)SA" << " ";
                                       //yylval.string = strdup(yytext);
                                       //return SA;
                                       if((GATE_TYPE != "inpt") && (GATE_TYPE != "from"))
@@ -54,13 +56,15 @@ SPACE [ \t\n]+
 <D>{NUMBER}{SPACE}{NUMBER} {                                  //used to match the number of fan, but in string
                           //yylval.string = strdup(yytext);
                           GATE_ASCI = strdup(yytext);
-                          cout  << GATE_ASCI << " "; 
+                          //cout  << GATE_ASCI << " "; 
+                          cout << "(D)FAN_INFO ";
                           BEGIN I;
-                          //return FAN_INFO_INPT;
+                          //return FAN_INFO;
                         }
 <H>.*               {
                                 //yylval.string = strdup(yytext);
-                                 cout  << yytext<<" ";
+                                 //cout  << yytext<<" ";
+                                 cout << " (H)SOURCE ";
                                 //return SOURCE;
                                 BEGIN A;
                               }
@@ -70,8 +74,8 @@ SPACE [ \t\n]+
                            
                            net_name = strdup(yytext);       
                             //yylval.number = atoi(yytext);
-
-                           cout << "\n"  << yytext << " ";
+                            cout <<"\n (A)NUMBER ";
+                           //cout << "\n"  << yytext << " ";
                            BEGIN B;
                            //return NUMBER;
  
@@ -81,7 +85,8 @@ SPACE [ \t\n]+
 <B>{GATENAME}             {                                      //  used to match 1gat, find 1gat
                               
                              GATE_ASCI = strdup(yytext);
-                             cout  << GATE_ASCI << " ";
+                             cout <<"(B)GATENAME ";
+                             //cout  << GATE_ASCI << " ";
                              //yylval.string = strdup(yytext);
                              BEGIN C;
                              // return GATENAME;
@@ -90,24 +95,27 @@ SPACE [ \t\n]+
 <C>{GATETYPE}                    {
                              GATE_TYPE = strdup(yytext);
                              figure_type = strdup(yytext);
-                             cout  << GATE_TYPE << " ";
+                             //cout  << GATE_TYPE << " ";
                              
                              //yylval.string = strdup(yytext);
                              
                              if(yytext == string_cmp_from)
                              {
                               BEGIN E;
+                              cout << "(C)FAN ";
                               //return FAN;
                              }
                              else if(yytext == string_cmp_inpt)
                              {
                               BEGIN D;
+                              cout << "(C)INPT ";
                               //return INPT;
                              }
                              else 
                              {
                               //Is_gate = 1;
                               //cout << Is_gate;
+                              cout << "(C)GATE ";
                               BEGIN D;
                               //return GATE;
                              }
@@ -118,10 +126,11 @@ SPACE [ \t\n]+
 
 <E>{GATENAME}             {
                              GATE_ASCI = strdup(yytext);
-                             cout  << GATE_ASCI << " ";
+                             //cout  << GATE_ASCI << " ";
+                             cout << "(E)SOURCE_GATENAME ";
                              //yylval.string = strdup(yytext);
                              BEGIN I;
-                             // return GATENAME;
+                             // return SOURCE_GATENAME;
 
                             }
 

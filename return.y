@@ -3,10 +3,19 @@
 #include <stdlib.h>	
 #include <stdarg.h>
 #include <string.h>
+#include <iostream>
+#include <climits>
+#include <sstream>
+#include <queue>
+#include <vector>
+#include <cctype>
+#include <fstream>
+extern "C" 
+using namespace std;
 void yyerror(char *);
 %}
 
-	%union YYSTYPE {
+%union YYSTYPE {
 		char *string;
 		int number;
 	}
@@ -17,7 +26,9 @@ void yyerror(char *);
 	%token <string> INPT
 	%token <string> FAN
 	%token <string> GATE
-	%token <string> NUMBER_OF_FAN
+	%token <string> FAN_INFO
+	%token <string> SOURCE
+	%token <string> SOURCE_GATENAME
 
 
 
@@ -42,39 +53,60 @@ void yyerror(char *);
 	
 
 	gate:
-			NUMBER GATENAME GATE NUMBER_OF_FAN SA NUMBER NUMBER	{
-																			printf("Clause: %d %s %s %s %s %d %d\n", $1, $2, $3, $4, $5, $6, $7);
-																			printf("This is the gate!\n");
-																			printf("gateindex is: %d\n", $1);
-																			printf("gatename is : %s\n", $2);
-																			printf("gatetype is : %s\n", $3);
-																			printf("fan info is : %s\n", $4);
-																			printf("fault info is: %s\n", $5);	
-																			printf("source gate info is: %d\n", $6);	
-																			printf("source gate info is: %d\n", $7);
-																			}												
+
+			NUMBER GATENAME GATE FAN_INFO SA  SOURCE						{
+																			printf("Clause: %d %s %s %s %s %s \n", $1, $2, $3, $4, $5, $6);
+																			//printf("This is the gate!\n");
+																			//printf("gateindex is: %d\n", $1);
+																			//printf("gatename is : %s\n", $2);
+																			//printf("gatetype is : %s\n", $3);
+																			//printf("fan info is : %s\n", $4);
+																			//printf("fault info is: %s\n", $5);	
+																			//printf("source gate info is: %s\n", $6);	
+																			
+																			//gates[gate_counter].Gate_index = $1;
+																			//gates[gate_counter].Gate_name = $2;
+																			//gates[gate_counter].Gate_type = $3;
+																			//gates[gate_counter].Fault = $5;
+																			//gates[gate_counter].Source_gate_string = $6;
+																		
+																			//gate_counter++;	
+																		}
+												
+			;																											
 	input:
-			NUMBER GATENAME INPT NUMBER_OF_FAN SA						{
+			NUMBER GATENAME INPT FAN_INFO SA							{
 																			printf("Clause: %d %s %s %s %s\n", $1, $2, $3, $4, $5);
-																			printf("This is the input!\n");
-																			printf("gateindex is: %d\n", $1);
-																			printf("gatename is : %s\n", $2);
-																			printf("gatetype is : %s\n", $3);
-																			printf("fan info is : %s\n", $4);
-																			printf("fault info is: %s\n", $5);		
-																			}
+																			//printf("This is the input!\n");
+																			//printf("gateindex is: %d\n", $1);
+																			//printf("gatename is : %s\n", $2);
+																			//printf("gatetype is : %s\n", $3);
+																			//printf("fan info is : %s\n", $4);
+																			//printf("fault info is: %s\n", $5);
+																			//gates[gate_counter].Gate_index = $1;	
+																			//gates[gate_counter].Gate_name = $2;
+																			//gates[gate_counter].Gate_type = $3;
+																			//gates[gate_counter].Fault = $5;
+																			//gate_counter++;	
+																		}
 			;
 
 	fan:
-			NUMBER GATENAME FAN GATENAME SA					{
+			NUMBER GATENAME FAN SOURCE_GATENAME SA									{
 																			printf("Clause: %d %s %s %s\n", $1, $2, $3, $4);
-																			printf("This is the fan!\n");
-																			printf("gateindex is: %d\n", $1);
-																			printf("gatename is : %s\n", $2);
-																			printf("from is : %s\n", $3);
-																			printf("source gate is: %s\n", $4);	
-																			printf("fault info is: %s\n", $5);	
-																			}
+																			//printf("This is the fan!\n");
+																			//printf("gateindex is: %d\n", $1);
+																			//printf("gatename is : %s\n", $2);
+																			//printf("from is : %s\n", $3);
+																			//printf("source gate is: %s\n", $4);	
+																			//printf("fault info is: %s\n", $5);
+																			//gates[gate_counter].Gate_index = $1;	
+																			//gates[gate_counter].Gate_name = $2;
+																			//gates[gate_counter].Gate_type = $3;
+																			//gates[gate_counter].Source_gate_name = $4;
+																			//gates[gate_counter].Fault = $5;
+																			//gate_counter++;		
+																		}
 			;
 
 	%%
@@ -84,8 +116,7 @@ void yyerror(char *);
 	void yyerror(char *s)
 	{
 		fprintf(stdout, "%s\n", s);
-	}
-
+	};
 	int main(void){
 		yyparse();
 		return 0;
