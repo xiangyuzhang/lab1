@@ -311,8 +311,8 @@ struct Graph
 		int temp1;
 		string temp2;
 		int  PO_index = 20001;
-		int Output = 1; 
 		ofstream out("out.txt");
+		//cout << graph->vertexes <<endl;
 		for(int i = 0; i<= graph->vertexes-1; i++)
 		{
 			if(graph->vertexList[i].Gate_type == "from")
@@ -321,6 +321,7 @@ struct Graph
 			}
 			else
 			{
+				int Output = 1; 
 				//这里输出index
 				out << graph->vertexList[i].Gate_index << " ";
 				//这里输出种类
@@ -343,27 +344,29 @@ struct Graph
 				}
 				
 				for(int j = graph->vertexList[i].Fan_out_number-1; j>=0; j--)
-				{/*
+				{
 						if(graph->vertexList[i].first[j] != NULL)
 					{
 						Output = 0;
 						temp1 = graph->vertexList[i].first[j]->vtxNO;    //need change
+						//cout << temp1 << endl;
+					
 						if(graph->vertexList[temp1].Gate_type == "from")
-					{
-						temp1 = graph->vertexList[temp1].first[j]->vtxNO;
-					}			
-						out << graph->vertexList[temp1].Gate_index << " ";
+					{						
+						temp1 = graph->vertexList[temp1].first[0]->vtxNO;
+					}							
+						out << graph->vertexList[temp1].Gate_index << " ";					
 					//cout << graph->vertexList[temp1].Gate_index << " ";
-					}	*/	
-					cout << graph->vertexList[i].Gate_name	<< " with " << graph->vertexList[i].Fan_out_number <<  endl;		
+					}	
+					//cout << graph->vertexList[i].Gate_name	<< " with " << graph->vertexList[i].Fan_out_number <<  endl;		
 				}
 
-/*	
+	
 				if(Output == 1)
 				{
 					out << PO_index;
 					PO_index++ ;
-				}*/
+				}
 			    out<<";"<<endl;
 			}
 		}
