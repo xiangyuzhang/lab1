@@ -127,6 +127,12 @@ struct Graph
 				graph->vertexList[i].Source_gate_name = gates[i].Source_gate_name;
 				graph->vertexList[i].Fan_out_number = gates[i].Fan_out_number;
 				graph->vertexList[i].Fan_in_number = gates[i].Fan_in_number;
+
+				if(graph->vertexList[i].Gate_type == "from")
+				{
+				graph->vertexList[i].Fan_out_number = 1;
+				graph->vertexList[i].Fan_in_number = 1;					
+				}
 				for(int j  = 0; j <=1; j++)
 				{
 					graph->vertexList[i].Fault_list[j] = gates[i].Fault_list[j];
@@ -152,9 +158,9 @@ struct Graph
 			return;
 		//cout << " Gate NUmber is: " << gate_counter <<endl;
 		//考虑到一点多边，所以我的输出风格需要变化
-		for(int i = 0; i <= gate_counter+1; i++)
+		for(int i = 0; i <= gate_counter; i++)
 		{
-			cout << i << " " << graph->vertexList[i].Gate_name ;
+			//cout << i << " " << graph->vertexList[i].Gate_name << " with " << graph->vertexList[i].Fan_out_number << endl;
 			for(int j = 0; j<=graph->vertexList[i].Fan_out_number-1; j++)
 			{
 				EdgeNode *p = graph->vertexList[i].first[j];
