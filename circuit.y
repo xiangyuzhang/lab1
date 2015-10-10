@@ -112,16 +112,19 @@ struct Graph
 		if (graph == NULL)
 		{
 			graph = new Graph;			//graph is a pointer, pointed for the start of the memory
-			graph->vertexList = &gates[n];				//pointer:vertexList points to the address:start of set of nodes
-			graph->vertexes = n;			// number of vertexes is n
+			graph->vertexList = new Gate_class[7552];
+			graph->vertexList = &(gates[n]);				//pointer:vertexList points to the address:start of set of nodes
+			graph->vertexes = n+1;			// number of vertexes is n+1
 			graph->edges = 0;
-			for (int i = 0; i < n; i++)
+			cout << n;
+			for (int i = 0; i <= n; i++)
 			{
-
-				stringstream ss;
+	
+				//stringstream ss;
 				//ss << gates[i].Gate_name;
 				//cout << gates[i].Gate_name << endl;
-				graph->vertexList[i].Gate_name = gates[i].Gate_name;
+			    //graph->vertexList[i].Gate_name = gates[i].Gate_name;
+			    graph->vertexList[i].Gate_name = gates[i].Gate_name;
 				graph->vertexList[i].Gate_type = gates[i].Gate_type;
 				graph->vertexList[i].Gate_index = gates[i].Gate_index;
 				graph->vertexList[i].Source_gate_name = gates[i].Source_gate_name;
@@ -474,7 +477,7 @@ struct Graph
 		int start_index = 20001;
 		InsertSort(gates, gate_counter);
 		cout << "Data is cleaned up!" << endl;
-		BuildGraph(graph, gate_counter+1);
+		BuildGraph(graph, gate_counter);
 
 		cout << "Graph is built!" << endl;
 		cout << "Vertex: " << graph->vertexes << "\n";
