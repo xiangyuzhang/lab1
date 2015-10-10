@@ -1,2 +1,11 @@
-1 PI 20001;
-PO 20001 ;
+1 PI ;
+2 PI ;
+3 PI ;
+6 PI ;
+7 PI ;
+10 NAND ;
+11 NAND ;
+16 NAND ;
+19 NAND ;
+22 NAND ;
+23 NAND ;

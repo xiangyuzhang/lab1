@@ -27,20 +27,21 @@ struct Gate_class					//here I declare the gate class
 	string Gate_name;
 	string Gate_type;
 	string Source_gate_name;
-	string Fault;
 	int Fault_list[2] = {-1,-1};
-	string Source_gate_string;
-	int Source_gate_index[16] = {-1,-1,-1,-1,-1,  -1,-1,-1,-1,-1,  -1,-1,-1,-1,-1,  -1};
-	EdgeNode *first;		//指向下一个线	
-	EdgeNode *second;
-	EdgeNode *third;	
+	int Source_gate_index[20] = {-1,-1,-1,-1,-1,  -1,-1,-1,-1,-1,  -1,-1,-1,-1,-1,  -1,-1,-1,-1,-1};	
 	bool visited;  
 	int distance;  
 	int path;  
 	int indegree;   
+	int Fan_out_number = 0;
+	int Fan_in_number = 0;
+	EdgeNode *first[20];
 }; 
-
+int gate_counter = -1;
 Gate_class gates[12000];
+int tempupdater = 0;
+
+
 
 struct Graph
 {
@@ -51,104 +52,51 @@ struct Graph
 
 
 
-int gate_counter = 0;
-Gate_class next_gate_is[2];
 
 %}
 
-	%union YYSTYPE {
-		char *string;
-		int number;
+	%union {
+	int val;
+	char *name;
 	}
-	%token <number> NUMBER 
-	%token <string> GATENAME 
-	%token <string> FROM 
-	%token <string> SA
-	%token <string> INPT
-	%token <string> FAN
-	%token <string> GATE
-	%token <string> FAN_INFO
-	%token <string> SOURCE
-	%token <string> SOURCE_GATENAME
+	%token <name> NETNAME
+	%token <val> FANINNET 
+	%token <name> GATETYPE 
+	%token <val> NETNO 
+	%token <val> FANOUT
+	%token <val> FANIN 
+	%token <val> FAULT
+	%token <name> FROMNAME
 
 
 
-	%{
+		%{
 		void yyerror(char *);
 		int yylex(void);
 	%}
 
 	%%
-	program:
-			program	clause 												{
-																			//printf("enter program!!\n");
-																			}
-			|
-			;
-
-	clause:
-			gate
-			|input
-			|fan
-			;
-	
-
-	gate:
-
-			 NUMBER GATENAME GATE FAN_INFO SA  SOURCE						{
-																			//printf("Clause: %d %s %s %s %s %d %d\n", $1, $2, $3, $4, $5, $6, $7);
-																			//printf("This is the gate!\n");
-																			//printf("gateindex is: %d\n", $1);
-																			//printf("gatename is : %s\n", $2);
-																			//printf("gatetype is : %s\n", $3);
-																			//printf("fan info is : %s\n", $4);
-																			//printf("fault info is: %s\n", $5);	
-																			//printf("source gate info is: %d\n", $6);	
-																			//printf("source gate info is: %d\n", $7);
-																			gates[gate_counter].Gate_index = $1;
-																			gates[gate_counter].Gate_name = $2;
-																			gates[gate_counter].Gate_type = $3;
-																			gates[gate_counter].Fault = $5;
-																			gates[gate_counter].Source_gate_string = $6;
-																		
-																			gate_counter++;	
-																		}
-												
-			;																											
-	input:
-			NUMBER GATENAME INPT FAN_INFO SA							{
-																			//printf("Clause: %d %s %s %s %s\n", $1, $2, $3, $4, $5);
-																			//printf("This is the input!\n");
-																			//printf("gateindex is: %d\n", $1);
-																			//printf("gatename is : %s\n", $2);
-																			//printf("gatetype is : %s\n", $3);
-																			//printf("fan info is : %s\n", $4);
-																			//printf("fault info is: %s\n", $5);
-																			gates[gate_counter].Gate_index = $1;	
-																			gates[gate_counter].Gate_name = $2;
-																			gates[gate_counter].Gate_type = $3;
-																			gates[gate_counter].Fault = $5;
-																			gate_counter++;	
-																		}
-			;
-
-	fan:
-			NUMBER GATENAME FAN SOURCE_GATENAME SA									{
-																			//printf("Clause: %d %s %s %s\n", $1, $2, $3, $4);
-																			//printf("This is the fan!\n");
-																			//printf("gateindex is: %d\n", $1);
-																			//printf("gatename is : %s\n", $2);
-																			//printf("from is : %s\n", $3);
-																			//printf("source gate is: %s\n", $4);	
-																			//printf("fault info is: %s\n", $5);
-																			gates[gate_counter].Gate_index = $1;	
-																			gates[gate_counter].Gate_name = $2;
-																			gates[gate_counter].Gate_type = $3;
-																			gates[gate_counter].Source_gate_name = $4;
-																			gates[gate_counter].Fault = $5;
-																			gate_counter++;		
-																		}
-			;
+	netlist:
+	| netlist line_item
+	;
+	line_item:   netname | faninnet | gatetype | netno | fanout | fanin | fault | fromname 
+	 	;
+	netname: NETNAME 					{gates[gate_counter].Gate_name = $1;}	
+	faninnet: FANINNET 					{gates[gate_counter].Source_gate_index[tempupdater] = $1;
+											tempupdater++;}
+	gatetype: GATETYPE 					{gates[gate_counter].Gate_type = $1;}
+	netno: NETNO 						{
+											gate_counter++;
+											gates[gate_counter].Gate_index = $1;
+											tempupdater =0;
+										}	
+	fanout: FANOUT 						{gates[gate_counter].Fan_out_number = $1;}
+	fanin: FANIN 						{gates[gate_counter].Fan_in_number = $1;}
+	fault: FAULT 						{
+										 if ($1 == 0){gates[gate_counter].Fault_list[0] = 1;}
+										 if ($1 == 1){gates[gate_counter].Fault_list[1] = 1;}
+										 }
+	fromname : FROMNAME 				{gates[gate_counter].Source_gate_name = $1;}
 
 	%%
 
@@ -177,14 +125,22 @@ Gate_class next_gate_is[2];
 				graph->vertexList[i].Gate_type = gates[i].Gate_type;
 				graph->vertexList[i].Gate_index = gates[i].Gate_index;
 				graph->vertexList[i].Source_gate_name = gates[i].Source_gate_name;
-				graph->vertexList[i].Fault = gates[i].Fault;
-				graph->vertexList[i].Source_gate_index[0] = gates[i].Source_gate_index[0];
-				graph->vertexList[i].Source_gate_index[1] = gates[i].Source_gate_index[1];
+				graph->vertexList[i].Fan_out_number = gates[i].Fan_out_number;
+				graph->vertexList[i].Fan_in_number = gates[i].Fan_in_number;
+				for(int j  = 0; j <=1; j++)
+				{
+					graph->vertexList[i].Fault_list[j] = gates[i].Fault_list[j];
+				}
+				for(int j = 0; j<=19; j++)
+				{
+					graph->vertexList[i].Source_gate_index[j] = gates[i].Source_gate_index[j];
+				}
 				graph->vertexList[i].path = -1;
 				graph->vertexList[i].visited = false;
-				graph->vertexList[i].first = NULL;    //what is first??? 
-				graph->vertexList[i].second = NULL; 
-				graph->vertexList[i].third = NULL; 
+				for (int j = 0; j <= graph->vertexList[i].Fan_out_number - 1; j++)
+				{
+					graph->vertexList[i].first[j] = NULL; 
+				}
 				graph->vertexList[i].indegree = 0;
 			}
 		}
@@ -194,25 +150,20 @@ Gate_class next_gate_is[2];
 	{
 		if (graph == NULL)
 			return;
-
+		//cout << " Gate NUmber is: " << gate_counter <<endl;
 		//考虑到一点多边，所以我的输出风格需要变化
-		for(int i = 0; i <= gate_counter-1; i++)
+		for(int i = 0; i <= gate_counter+1; i++)
 		{
-			EdgeNode *p1 = graph->vertexList[i].first;
-			EdgeNode *p2 = graph->vertexList[i].second;
-			EdgeNode *p3 = graph->vertexList[i].third;
-			if (p1 != NULL)
+			cout << i << " " << graph->vertexList[i].Gate_name ;
+			for(int j = 0; j<=graph->vertexList[i].Fan_out_number-1; j++)
 			{
-				cout << "gate index = " << gates[i].Gate_name << " , to " << graph->vertexList[p1->vtxNO].Gate_name << endl;
+				EdgeNode *p = graph->vertexList[i].first[j];
+				if (p != NULL)
+				{
+					cout << "    gatename = " << gates[i].Gate_name << " , to " << graph->vertexList[p->vtxNO].Gate_name << endl;
+				}
 			}
-			if (p2 != NULL)
-			{
-				cout << "gate index = " << gates[i].Gate_name << " , to " << graph->vertexList[p2->vtxNO].Gate_name << endl;
-			}
-			if (p3 != NULL)
-			{
-				cout << "gate index = " << gates[i].Gate_name << " , to " << graph->vertexList[p3->vtxNO].Gate_name << endl;
-			}
+
 		}
 
 		/*这部分是原文
@@ -238,43 +189,26 @@ Gate_class next_gate_is[2];
 		if (graph == NULL) return;
 		//if (v1 < 0 || v1 > graph->vertexes - 1) return;   //here it will consider whether the vertex is already existed, I need to change!!!
 		//if (v2 < 0 || v2 > graph->vertexes - 1) return;
-		if (v1 == v2) return; //no loop is allowed  
-		EdgeNode *p1 = graph->vertexList[v1].first;
-		EdgeNode *p2 = graph->vertexList[v1].second;
-		EdgeNode *p3 = graph->vertexList[v1].third;
-
+		//if (v1 == v2) return; //no loop is allowed  
 		//貌似我们允许线的多次连接，所以我做了下面的修改
-		if (p1 == NULL)//is the first vertex's prvious is unknown
+		//cout << "I am here for " << graph->vertexList[v1].Gate_name << " with Fan_out_number = " << graph->vertexList[v1].Fan_out_number << endl;
+		for(int j = 0; j<=graph->vertexList[v1].Fan_out_number; j++)
 		{
-			//can not be p = new EdgeNode;    
-			graph->vertexList[v1].first = new EdgeNode;  
-			graph->vertexList[v1].first->next = NULL;
-			graph->vertexList[v1].first->vtxNO = v2;
-			//graph->vertexList[v1].first->weight = weight;
-			graph->edges++;
-			graph->vertexList[v2].indegree++;
-			return;
-		}
-		else if (p2 == NULL)
-		{
-			graph->vertexList[v1].second = new EdgeNode;  
-			graph->vertexList[v1].second->next = NULL;
-			graph->vertexList[v1].second->vtxNO = v2;
-			//graph->vertexList[v1].first->weight = weight;
-			graph->edges++;
-			graph->vertexList[v2].indegree++;
-			return;			
-		}
-		else if (p3 == NULL)
-		{
-			graph->vertexList[v1].third = new EdgeNode;  
-			graph->vertexList[v1].third->next = NULL;
-			graph->vertexList[v1].third->vtxNO = v2;
-			//graph->vertexList[v1].first->weight = weight;
-			graph->edges++;
-			graph->vertexList[v2].indegree++;
-			return;			
-		}
+			//cout << "I am here for " << graph->vertexList[v1].Gate_name;
+			if (graph->vertexList[v1].first[j] == NULL)
+			{
+				graph->vertexList[v1].first[j] = new EdgeNode;  
+				graph->vertexList[v1].first[j]->next = NULL;
+				graph->vertexList[v1].first[j]->vtxNO = v2;
+				//graph->vertexList[v1].first->weight = weight;
+				graph->edges++;
+				graph->vertexList[v2].indegree++;
+				//cout << "edge between: " << graph->vertexList[v1].Gate_name << " and " << graph->vertexList[v2].Gate_name << " Connected!" << endl; 
+				return;
+			}
+		}		
+		//貌似我们允许线的多次连接，所以我做了下面的修改
+
 		/*
 		//下面的注释是原文
 		EdgeNode *p = graph->vertexList[v1].first;
@@ -332,123 +266,9 @@ Gate_class next_gate_is[2];
 	    }
 	}
 
-	void BFS(Graph *graph)
-	{
-	if(graph == NULL)
-		return;
-	cout << "BFS\n";
-
-	for (int i = 0; i < graph->vertexes; i++)  //double check all the gates are unvisited
-		graph->vertexList[i].visited = false;
-
-	
-	queue<int> QVertex;
-
-	for (int i = 0; i < graph->vertexes; i++)  //标记目前没有便利过的gate为visited，并且输出名字
-	{
-		//cout<<"get in for"<<endl;
-		if (!graph->vertexList[i].visited)  
-		{
-			//cout<<"get in if"<<endl;
-			QVertex.push(i);
-			//cout<<"i am here" << graph->vertexList[i].Gate_type;
-			cout << graph->vertexList[i].Gate_name << " " << graph->vertexList[i].Gate_type << " ";
-			graph->vertexList[i].visited = true;
-			//cout<<"this is the current size of queue:" << QVertex.size() << endl;
-		}
-		if(QVertex.size() >> 0)
-		{
-			//cout<<"get in while"<<endl;
-			int vtxNO = QVertex.front();
-			QVertex.pop();
-			EdgeNode *p1 = graph->vertexList[vtxNO].first;  //找到放入元素出边
-			EdgeNode *p2 = graph->vertexList[vtxNO].second;
-			EdgeNode *p3 = graph->vertexList[vtxNO].third;
-			//cout<<"this is the current size of queue:" << QVertex.size() << endl;
-			
-			if(p1 != NULL)
-			{
-				if (!graph->vertexList[p1->vtxNO].visited)
-				{	
-					//cout << graph->vertexList[i].Gate_name << " " << graph->vertexList[i].Gate_type << " ";
-					cout << graph->vertexList[p1->vtxNO].Gate_index << " " << endl;
-					graph->vertexList[p1->vtxNO].visited = true;
-					QVertex.push(p1->vtxNO);
-				}
-				p1 = p1->next;
-			}
-
-			if(p2 != NULL)
-			{
-				if (!graph->vertexList[p2->vtxNO].visited)
-				{
-										
-					cout << graph->vertexList[p2->vtxNO].Gate_index << " " << endl;
-
-					graph->vertexList[p2->vtxNO].visited = true;
-					QVertex.push(p2->vtxNO);
-				}
-				p2 = p2->next;
-			}
-
-			if(p3 != NULL)
-			{
-				if (!graph->vertexList[p3->vtxNO].visited)
-				{
-										
-					cout << graph->vertexList[p3->vtxNO].Gate_index << " " << endl;
-
-					graph->vertexList[p3->vtxNO].visited = true;
-					QVertex.push(p3->vtxNO);
-				}
-				p3 = p3->next;
-			}
-
-			//cout<<"get out loop"<<endl;
-
-		}
-	}
-
-	cout << "\n";
-	}
-	void Get_next_gate(Graph *graph, Gate_class gate)
-	{
-		int index = 0;
-		if(gate.first != NULL)
-		{
-		 	next_gate_is[index] = graph->vertexList[gate.first->vtxNO];
-			if(next_gate_is[index].Gate_type == "from")
-			{
-				next_gate_is[index] = graph->vertexList[next_gate_is[index].first->vtxNO];
-				index++;
-			}
 
 
-		}
-
-		if(gate.second != NULL)
-		{
-		 	next_gate_is[index] = graph->vertexList[gate.second->vtxNO];
-			if(next_gate_is[index].Gate_type == "from")
-			{
-				next_gate_is[index] = graph->vertexList[next_gate_is[index].second->vtxNO];
-				index++;
-			}
-
-		}
-
-		if(gate.third != NULL)
-		{
-		 	next_gate_is[index] = graph->vertexList[gate.second->vtxNO];
-			if(next_gate_is[index].Gate_type == "from")
-			{
-				next_gate_is[index] = graph->vertexList[next_gate_is[index].second->vtxNO];
-				index++;
-			}
-
-		}
-
-	}
+/*
 
 	void Add_PO(Graph *graph)  //遍历整个图，寻找哪里需要加上新的PO  -------->没有完成好
 	{
@@ -479,11 +299,13 @@ Gate_class next_gate_is[2];
 //		//加上边
 //		AddEdge(graph, i, start_index);
 	}
+*/
 	void Generate_result(Graph *graph, int size)
 	{
 		int temp1;
 		string temp2;
 		int  PO_index = 20001;
+		int Output = 1; 
 		ofstream out("out.txt");
 		for(int i = 0; i<= graph->vertexes-1; i++)
 		{
@@ -496,63 +318,46 @@ Gate_class next_gate_is[2];
 				//这里输出index
 				out << graph->vertexList[i].Gate_index << " ";
 				//这里输出种类
+
 				if(graph->vertexList[i].Gate_type == "inpt")
 				{
 					out << "PI" << " ";
 				}
-				
+			
 				else if((graph->vertexList[i].Gate_type != "inpt")&&(graph->vertexList[i].Gate_type != "from"))
 				{
 					temp2 = graph->vertexList[i].Gate_type;
+					//out << temp2 << " ";
 					if(temp2 == "nand")		out << "NAND" << " ";
 					if(temp2 == "nor")		out << "NOR" << " ";
 					if(temp2 == "or")		out << "OR" << " ";
 					if(temp2 == "xor")		out << "XOR" << " ";	
 					if(temp2 == "and")		out << "AND" << " ";				
-
+					if(temp2 == "buff")		out << "BUFF" << " ";
 				}
 				
-				//这里输出下一个gate的index
-				if(graph->vertexList[i].third != NULL)
-				{
-				temp1 = graph->vertexList[i].third->vtxNO;    //need change
-				//cout << graph->vertexList[temp1].Gate_index << " ";
-				if(graph->vertexList[temp1].Gate_type == "from")
-				{
-					temp1 = graph->vertexList[temp1].first->vtxNO;
-				}
-				out << graph->vertexList[temp1].Gate_index << " ";
-				}
-
-
-				if(graph->vertexList[i].second != NULL)
-				{
-				temp1 = graph->vertexList[i].second->vtxNO;    //need change
-				if(graph->vertexList[temp1].Gate_type == "from")
-				{
-					temp1 = graph->vertexList[temp1].first->vtxNO;
-				}
-				out << graph->vertexList[temp1].Gate_index << " ";
-				//cout << graph->vertexList[temp1].Gate_index << " ";
+				for(int j = graph->vertexList[i].Fan_out_number-1; j>=0; j--)
+				{/*
+						if(graph->vertexList[i].first[j] != NULL)
+					{
+						Output = 0;
+						temp1 = graph->vertexList[i].first[j]->vtxNO;    //need change
+						if(graph->vertexList[temp1].Gate_type == "from")
+					{
+						temp1 = graph->vertexList[temp1].first[j]->vtxNO;
+					}			
+						out << graph->vertexList[temp1].Gate_index << " ";
+					//cout << graph->vertexList[temp1].Gate_index << " ";
+					}	*/	
+					cout << graph->vertexList[i].Gate_name	<< " with " << graph->vertexList[i].Fan_out_number <<  endl;		
 				}
 
-
-				if(graph->vertexList[i].first != NULL)
-				{
-				temp1 = graph->vertexList[i].first->vtxNO;    //need change
-				if(graph->vertexList[temp1].Gate_type == "from")
-				{
-					temp1 = graph->vertexList[temp1].first->vtxNO;
-				}			
-				out << graph->vertexList[temp1].Gate_index << " ";
-				//cout << graph->vertexList[temp1].Gate_index << " ";
-				}
-
-				if((graph->vertexList[i].first == NULL)&&(graph->vertexList[i].second == NULL)&&(graph->vertexList[i].third == NULL))
+/*	
+				if(Output == 1)
 				{
 					out << PO_index;
 					PO_index++ ;
-				}
+				}*/
 			    out<<";"<<endl;
 			}
 		}
@@ -562,7 +367,7 @@ Gate_class next_gate_is[2];
 			out << "PO" << " " << i << " ;" <<endl;
 		}
 	}
-
+/*
 	void Fault_generation(Graph *graph, int size)
 	{
 		bool fault_list[2] = {-1, -1};
@@ -595,9 +400,61 @@ Gate_class next_gate_is[2];
 		}
 
 	}
+*/
 	int main(void){
 
 		yyparse();
+
+		for(int i = 0; i<=gate_counter; i++)
+		{
+			cout << gates[i].Gate_index << " " << gates[i].Gate_name << " " << gates[i].Gate_type << " ";
+			if(gates[i].Gate_type == "from")
+			{
+				cout << gates[i].Source_gate_name << " " ;
+					if(gates[i].Fault_list[0] == 1)
+					{
+						cout << ">SA0" << " ";
+					}
+					if(gates[i].Fault_list[1] == 1)
+					{
+						cout << ">SA1" << " ";
+					}
+					cout << endl;
+			}
+
+			else if(gates[i].Gate_type == "inpt")
+			{
+				cout << gates[i].Fan_out_number << " " << gates[i].Fan_in_number << " ";
+				if(gates[i].Fault_list[0] == 1)
+				{
+					cout << ">SA0" << " ";
+				}
+				if(gates[i].Fault_list[1] == 1)
+				{
+					cout << ">SA1" << " ";
+				}
+				cout << endl;
+			}
+			else
+			{
+				cout << gates[i].Fan_out_number << " " << gates[i].Fan_in_number << " ";
+				if(gates[i].Fault_list[0] == 1)
+				{
+					cout << ">SA0" << " ";
+				}
+				if(gates[i].Fault_list[1] == 1)
+				{
+					cout << ">SA1" << " ";
+				}	
+				cout << endl;
+				for(int j = 0; j <= gates[i].Fan_in_number-1; j++)
+				{
+					cout << gates[i].Source_gate_index[j] << " ";
+				}
+				
+				cout << endl;
+			}
+		}
 		cout <<"Data collect successfully!" <<endl;
 		//cout << "this is the total number of gate: " << gate_counter<<endl;
 		/*for(int j = 0; j<= gate_counter-1; j++)
@@ -608,22 +465,20 @@ Gate_class next_gate_is[2];
 		int start_index = 20001;
 		InsertSort(gates, gate_counter);
 		cout << "Data is cleaned up!" << endl;
-		BuildGraph(graph, gate_counter);
-
+		BuildGraph(graph, gate_counter+1);
 
 		cout << "Graph is built!" << endl;
-		cout << "after build graph" << endl;
 		cout << "Vertex: " << graph->vertexes << "\n";
 		cout << "Edge: " << graph->edges << "\n";
 		//PrintGraph(graph);
 		//now I need to carefully arrange edges
 
 
-		for(int i = 0; i <= gate_counter-1; i++)
+		for(int i = 0; i <= gate_counter; i++)
 		{
 			if(gates[i].Gate_type == "from")
-			{	//cout << "find a fan with index: " << gates[i].Gate_index << endl;
-				for(int j = 0; j <= gate_counter-1; j++)
+			{	//cout << "find a fan with index: " << graph->vertexList[i].Gate_index << " ";
+				for(int j = 0; j <= gate_counter; j++)
 				{
 					if(gates[j].Gate_name == gates[i].Source_gate_name)
 					{	//cout << "find its origin " << gates[j].Gate_index << endl;
@@ -636,48 +491,37 @@ Gate_class next_gate_is[2];
 
 			else if(gates[i].Gate_type != "inpt")  //现在找到了gate
 			{
-				//cout << "the gate is: " << gates[i].Gate_name << " with source index: " << gates[i].Source_gate_index[0] << " and " << gates[i].Source_gate_index[1] << endl;
-				for (int j = 0; j <= gate_counter-1; j++)
+				cout << "the gate is: " << graph->vertexList[i].Gate_name << " with source index: " ;
+				for (int k = 0; k <= gates[i].Fan_in_number-1 ; k++)
 				{
-					if(gates[j].Gate_index == gates[i].Source_gate_index[0])
+					cout << graph->vertexList[i].Source_gate_index[k]<<endl;
+					for(int j = 0; j <= gate_counter; j++)
+					{
+						if(gates[j].Gate_index == gates[i].Source_gate_index[k])
 					{
 						AddEdge(graph, j, i);
 					}
-					if(gates[j].Gate_index == gates[i].Source_gate_index[1])
-					{
-						AddEdge(graph, j, i);
+
 					}
 				}
+				cout << endl;
 			}
 		}
-		cout <<"Edgeds are added" << endl;
+		//cout <<"Edgeds are added" << endl;
 
 		//cout<<"here";
 		//Add_PO(graph);
 		//cout << "PO is added" <<endl;
 		//cout<<"Here is the gates name, index and type:"<<endl;
-		//for(int i = 0; i<=gate_counter-1; i++)
-		//{
-		//	cout<<graph->vertexList[i].Gate_name<<" ";
-		//	cout<<graph->vertexList[i].Gate_index<<" ";
-		//	cout<<graph->vertexList[i].Gate_type<<endl;
-		//}
+		for(int i = 0; i<=gate_counter; i++)
+		{
+			cout<<graph->vertexList[i].Gate_name<<" ";
+			cout<<graph->vertexList[i].Gate_index<<" ";
+			cout<<graph->vertexList[i].Gate_type<<endl;
+		}
 		cout << "Vertex: " << graph->vertexes << "\n";
 		cout << "Edge: " << graph->edges << "\n";
-		/*
-		AddEdge(graph, 0, 1);
-		AddEdge(graph, 0, 2);
-		AddEdge(graph, 0, 3);
-		AddEdge(graph, 1, 3);
-		AddEdge(graph, 1, 4);
-		AddEdge(graph, 2, 5);
-		AddEdge(graph, 3, 2);
-		AddEdge(graph, 3, 5);
-		AddEdge(graph, 3, 6);
-		AddEdge(graph, 4, 3);
-		AddEdge(graph, 4, 6);
-		AddEdge(graph, 6, 5);
-		*/
+		cout << "Print Edge" << endl;
 		PrintGraph(graph);
 
 
