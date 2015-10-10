@@ -1,171 +1,77 @@
 %{
-#include <string>
-#include <iostream>
-extern "C" 
-void yyerror(char *);
+/* DEFINITIONS */
+//extern "C"
+//{
+//}
+#include <stdio.h>
 #include "y.tab.h"
-extern YYSTYPE yylval;
-using namespace std;
 
-int check;  
-int fanouts;
-int fanins;
-string figure_type;
-string net_name;
-string GATE_ASCI;
-string GATE_TYPE;
-int Is_gate;;
-string string_cmp_inpt = "inpt";
-string string_cmp_from = "from";
-
-
+//int yylex(void);
+//}
+char fromvar[] = "from";
+int count=0;
 %}
+/*STATES*/
+%start S1 S2 S3 S4 S5 S6 S7
 
-%start A B C D E F G H I
-NUMBER  [0-9]+
-GATENAME [0-9a-zA-Z]+
-GATETYPE  [a-zA-Z]+
-SPACE [ \t\n]+ 
+
 %%
+[\n\t]|">"      {/*NO ACTIONS*/}
+
+"*".*         {BEGIN S1;}   
+<S1>[0-9]+  {  /*DIGITS: NET NUMBER STATE*/
+    yylval.val = atoi(yytext); 
+    BEGIN S2;
+    return NETNO;
+      }
 
 
-
-"*".*               {                       
-                         //yylval.string = strdup(yytext);
-                         
-                         //return COMMENT;
-                          BEGIN A;
-                      }
-
-<I>(">sa"[0-1])({SPACE}(">sa"[0-1]))?      {
-                                      //cout << yytext << " ";
-                                      cout << "SA" << " ";
-                                      yylval.string = strdup(yytext);
-                                      return SA;
-                                      if((GATE_TYPE != "inpt") && (GATE_TYPE != "from"))
-                                      {
-                                        BEGIN H;
-                                      }
-                                      else
-                                      {
-                                        BEGIN A;
-                                      }
-                                          }
-
-<D>{NUMBER}{SPACE}{NUMBER} {                                  //used to match the number of fan, but in string
-                          yylval.string = strdup(yytext);
-                          GATE_ASCI = strdup(yytext);
-                          //cout  << GATE_ASCI << " "; 
-                          cout << "FAN_INFO ";
-                          BEGIN I;
-                          return FAN_INFO;
-                        }
-<H>.*               {
-                                yylval.string = strdup(yytext);
-                                 //cout  << yytext<<" ";
-                                 cout << " SOURCE ";
-                                return SOURCE;
-                                BEGIN A;
-                              }
+<S2>[0-9]+|[a-zA-Z0-9]+|[a-zA-Z]+ {   /*DIGIT OR ALPHANUMERIC:  ASCII NAME OF NET*/
+          yylval.name=yytext;
+          BEGIN S3;return NETNAME;
+          }
 
 
-<A>{NUMBER}           {                                          //used to match gate_index;
-                           
-                           net_name = strdup(yytext);       
-                            yylval.number = atoi(yytext);
-                            cout <<"\n NUMBER ";
-                           //cout << "\n"  << yytext << " ";
-                           BEGIN B;
-                           return NUMBER;
+<S3>[a-zA-Z]+   { /*ALPHA: GATETYPE*/
+    yylval.name=yytext;
+    if (strcmp(yytext,fromvar)==0) {BEGIN S4;return GATETYPE;}
+    else {BEGIN S5; return GATETYPE;}
+    }
+
+
+<S4>[0-9]+|[a-zA-Z0-9]+|[a-zA-Z]+ {     /*DIGITS OR ALPHANUMERIC: FROM NET ASCIINAME*/
+          yylval.name=yytext; 
+          BEGIN S1;
+          return FROMNAME;
+           }
+
+<S5>[0-9]+  { /*DIGITS: NO OF FANOUT*/
+      yylval.val = atoi(yytext);
+        BEGIN S6; 
+      return FANOUT;
+    }
+
+
+<S6>[0-9]+ {   /*DIGITS: NO OF FANIN*/
+      yylval.val = atoi(yytext);
+      if(atoi(yytext)>0) {count=atoi(yytext); BEGIN S7;return FANIN;}
+      else {BEGIN S1;return FANIN;}   
+      }
+
+
+<S7>[0-9]+ {  /*DIGITS: INPUT NETS*/
+        yylval.val = atoi(yytext);
+        count=count-1;
+        if(count==0) { BEGIN S1;}
+        return FANINNET;
+       }
  
-                        }
 
-
-<B>{GATENAME}             {                                      //  used to match 1gat, find 1gat
-                              
-                             GATE_ASCI = strdup(yytext);
-                             cout <<"GATENAME ";
-                             //cout  << GATE_ASCI << " ";
-                            yylval.string = strdup(yytext);
-                             BEGIN C;
-                              return GATENAME;
-                            }
-
-<C>{GATETYPE}                    {
-                             GATE_TYPE = strdup(yytext);
-                             figure_type = strdup(yytext);
-                             //cout  << GATE_TYPE << " ";
-                             
-                             yylval.string = strdup(yytext);
-                             
-                             if(yytext == string_cmp_from)
-                             {
-                              BEGIN E;
-                              cout << "FAN ";
-                              return FAN;
-                             }
-                             else if(yytext == string_cmp_inpt)
-                             {
-                              BEGIN D;
-                              cout << "INPT ";
-                              return INPT;
-                             }
-                             else 
-                             {
-                              //Is_gate = 1;
-                              //cout << Is_gate;
-                              cout << "GATE ";
-                              BEGIN D;
-                              return GATE;
-                             }
-                            
-                             }
-                            
-                         
-
-<E>{GATENAME}             {
-                             GATE_ASCI = strdup(yytext);
-                             //cout  << GATE_ASCI << " ";
-                             cout << "SOURCE_GATENAME ";
-                             yylval.string = strdup(yytext);
-                             BEGIN I;
-                             return SOURCE_GATENAME;
-
-                            }
-
-
-
-
-
-                    
-[ \t\n]+            /*eat white space*/
-
-
+"sa0" {yylval.val = 0; return FAULT;} /*STRUCK AT FAULT*/    
+"sa1" {yylval.val = 1; return FAULT;} /*STRUCK AT FAULT*/       
 %%
-
-/*int find_gatetype(char *string_pass){
-  char *string_cmp_inpt = "inpt";
-  char *string_cmp_from = "from";
-  if(strcmp(string_pass, string_cmp_inpt) == 0) {
-   return 0;
-  }
-   else if(strcmp(string_pass, string_cmp_from) == 0)
-   {
-    return 1;
-   }
-  else
-  {
-    return 2;
-  }
-}*/
-
-
-
-
-
-int yywrap(void)
-{
-  return 1;
+int yywrap(void) {
+return 1;
 }
 
 
