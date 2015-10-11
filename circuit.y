@@ -112,14 +112,14 @@ struct Graph
 		if (graph == NULL)
 		{
 			graph = new Graph;			//graph is a pointer, pointed for the start of the memory
-			graph->vertexList = new Gate_class[7552];
-			graph->vertexList = &(gates[n]);				//pointer:vertexList points to the address:start of set of nodes
-			graph->vertexes = n+1;			// number of vertexes is n+1
+			//graph->vertexList = new Gate_class[7552];
+			graph->vertexList = &gates[n];				//pointer:vertexList points to the address:start of set of nodes！！！！！！！！！！！！！！！！！！！！！！！！！！
+			graph->vertexes = n;			// number of vertexes is n+1
 			graph->edges = 0;
 			cout << n;
 			for (int i = 0; i <= n; i++)
 			{
-	
+	            
 				//stringstream ss;
 				//ss << gates[i].Gate_name;
 				//cout << gates[i].Gate_name << endl;
@@ -379,44 +379,76 @@ struct Graph
 			out << "PO" << " " << i << " ;" <<endl;
 		}
 	}
-/*
+
 	void Fault_generation(Graph *graph, int size)
 	{
-		bool fault_list[2] = {-1, -1};
-		int s;
-
-	
-		for(int i = 0; i<=size-1; i++)
+		//算法： 1：按次序输出
+		//		2：每个gate和input输出index 0 1 或者 2
+		//		3: 每个fan输出 fanout-index fanin-index fault
+		int fanin_index = -1;
+		int fanout_index = -1;
+		ofstream out("fault-list.txt");
+		for(int i = 0; i <= size; i++)
 		{
-			cout<<graph->vertexList[i].Gate_index<<" "<<graph->vertexList[i].Fault;
-			if(graph->vertexList[i].Fault.find("sa0") != std::string::npos)
+			if(graph->vertexList[i].Gate_type != "from")
 			{
-				//fault_list[0] = '0';
-				//s = 0;
-				cout<< "found sa0 ";
+				//cout << graph->vertexList[i].Gate_type << endl;
+				if(graph->vertexList[i].Fault_list[0] == 1)
+				{
+					out << graph->vertexList[i].Gate_index << " 0 0 " << endl;
+				}
+				if(graph->vertexList[i].Fault_list[1] == 1)
+				{
+					out << graph->vertexList[i].Gate_index << " 0 1 " << endl;
+				}
+				
 			}
 
-			if(graph->vertexList[i].Fault.find("sa1") != std::string::npos)
-			{
-				//fault_list[1] = '1';
-				//s = 1;
-				cout << "found sa1";
-			}
-//			for(int j = 0; j<=s; j++)
-//			{
-//				cout<<" "<<fault_list[j];
-//			}
+			else if(graph->vertexList[i].Gate_type == "from")
+			{ 
+				for(int k = 0; k <= size; k++)
+				{
+					for(int x = 0; x <= graph->vertexList[k].Fan_in_number-1; x++)
+					{
+						if(graph->vertexList[k].Source_gate_index[x] == graph->vertexList[i].Gate_index)
+						{
+							fanout_index = graph->vertexList[k].Gate_index;
+							out << fanout_index << " " ;
+							break;
+						}
+					}
+				
+				}
+				for(int j = 0; j <= size; j++)
+				{
+					if(graph->vertexList[j].Gate_name == graph->vertexList[i].Source_gate_name)
+					{
+						fanin_index = graph->vertexList[j].Gate_index;
+						out << fanin_index << " " ;
+						break;
+					}				
+				}
 
-			cout << endl;
-		s = -1;
+
+
+				if(graph->vertexList[i].Fault_list[0] == 1)
+				{
+					out << "0\n";
+				}
+				if(graph->vertexList[i].Fault_list[1] == 1)
+				{
+					out << "1\n";				
+				
+				}
+			}
+
 		}
-
 	}
-*/
+
 	int main(void){
 
 		yyparse();
-
+/*
 		for(int i = 0; i<=gate_counter; i++)
 		{
 			cout << gates[i].Gate_index << " " << gates[i].Gate_name << " " << gates[i].Gate_type << " ";
@@ -467,25 +499,42 @@ struct Graph
 				cout << endl;
 			}
 		}
+*/
 		cout <<"Data collect successfully!" <<endl;
 		//cout << "this is the total number of gate: " << gate_counter<<endl;
 		/*for(int j = 0; j<= gate_counter-1; j++)
 		{
 			cout<<gates[j].Gate_index << " " << gates[j].Gate_name << " " << gates[j].Gate_type << " " <<endl; 
 		}*/
+		for(int i = 0; i<=gate_counter; i++)
+		{
+			cout << i << endl;
+			cout<<gates[i].Gate_name<<" ";
+			cout<<gates[i].Gate_index<<" ";
+			cout<<gates[i].Gate_type<<endl;
+		}
 		Graph *graph = NULL;
 		int start_index = 20001;
-		InsertSort(gates, gate_counter);
-		cout << "Data is cleaned up!" << endl;
-		BuildGraph(graph, gate_counter);
+		//InsertSort(gates, gate_counter);
+		cout << " -------------------------------------- " <<endl;
 
+
+		cout << "Data is cleaned up!" << endl;
+		BuildGraph(graph, gate_counter+1);
 		cout << "Graph is built!" << endl;
+		for(int i = 0; i<=gate_counter; i++)
+		{
+			cout << i << endl;
+			cout<<gates[i].Gate_name<<" ";
+			cout<<gates[i].Gate_index<<" ";
+			cout<<gates[i].Gate_type<<endl;
+		}	
 		cout << "Vertex: " << graph->vertexes << "\n";
 		cout << "Edge: " << graph->edges << "\n";
 		//PrintGraph(graph);
 		//now I need to carefully arrange edges
 
-
+	
 		for(int i = 0; i <= gate_counter; i++)
 		{
 			if(gates[i].Gate_type == "from")
@@ -519,6 +568,8 @@ struct Graph
 				cout << endl;
 			}
 		}
+
+
 		//cout <<"Edgeds are added" << endl;
 
 		//cout<<"here";
@@ -531,6 +582,16 @@ struct Graph
 			cout<<graph->vertexList[i].Gate_index<<" ";
 			cout<<graph->vertexList[i].Gate_type<<endl;
 		}
+		cout << " -------------------------------------- " <<endl;
+		cout << "gate_counter = " << gate_counter << endl;
+		for(int i = 0; i<=gate_counter; i++)
+		{
+			cout << i << endl;
+			cout<<gates[i].Gate_name<<" ";
+			cout<<gates[i].Gate_index<<" ";
+			cout<<gates[i].Gate_type<<endl;
+		}		
+
 		cout << "Vertex: " << graph->vertexes << "\n";
 		cout << "Edge: " << graph->edges << "\n";
 		cout << "Print Edge" << endl;
@@ -539,6 +600,6 @@ struct Graph
 
 		//BFS(graph);
 		Generate_result(graph, gate_counter);
-	//	Fault_generation(graph, gate_counter);
+		Fault_generation(graph, gate_counter);
 		return 0;
 	}
